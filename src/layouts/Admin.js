@@ -25,6 +25,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
+import routesNotMenu from "routesNotMenu";
 
 class Admin extends React.Component {
   componentDidUpdate(e) {
@@ -50,8 +51,6 @@ class Admin extends React.Component {
         }
     });
   };
-
-
 
   getBrandText = path => {
     for (let i = 0; i < routes.length; i++) {
@@ -83,6 +82,7 @@ class Admin extends React.Component {
             brandText={this.getBrandText(this.props.location.pathname)}
           />
           <Switch>
+            {this.getRoutes(routesNotMenu)}
             {this.getRoutes(routes)}
             <Redirect from="*" to="/admin/index" />
           </Switch>

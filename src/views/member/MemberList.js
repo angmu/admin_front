@@ -22,6 +22,8 @@ import {
 } from "reactstrap";
 import React from 'react'
 import Header from "components/Headers/Header.js";
+import UserList from '../../components/User/UserListComponent';
+
 export default function MemberList() {
   return (
     <>
@@ -33,25 +35,7 @@ export default function MemberList() {
               <CardHeader className="bg-transparent border-0">
                   <h3 className="mb-0">회원리스트</h3>
               </CardHeader>
-              <Table>
-                  <thead>
-                    <tr>
-                      <th scope="col">글번호</th>
-                      <th scope="col">글제목</th>
-                      <th scope="col">작성자</th>
-                      <th scope="col">작성일</th>
-                      <th scope="col">조회수</th>
-                      <th scope="col" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      
-                    </tr>
-
-
-                  </tbody>
-              </Table>
+                  <UserList/>
             </Card>
           </Col>
       </Row>
