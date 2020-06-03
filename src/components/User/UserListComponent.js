@@ -53,25 +53,46 @@ export default class UserListComponent extends Component {
             <Table>
                 <thead>
                     <tr>
-                      <th scope="col">글번호</th>
-                      <th scope="col">글제목</th>
-                      <th scope="col">작성자</th>
-                      <th scope="col">작성일</th>
-                      <th scope="col">조회수</th>
-                      <th scope="col" />
+                      <th scope="col">ID</th>
+                      <th scope="col">이름</th>
+                      <th scope="col">비밀번호</th>
+                      <th scope="col">이메일</th>
+                      <th scope="col">이메일수신여부</th>
+                      <th scope="col">우편번호</th>
+                      <th scope="col">주소</th>
+                      <th scope="col">상세주소</th>
+                      <th scope="col">핸드폰번호</th>
+                      <th scope="col">전화번호</th>
+                      <th scope="col">SMS수신여부</th>
+                      <th scope="col">생년월일</th>
+                      <th scope="col">음력/양력</th>
+                      <th scope="col">보유포인트</th>
+                      <th scope="col">가입일</th>
+                      <th scope="col">탈퇴일</th>
                     </tr>
                   </thead>
                   <tbody>
                       {console.log(this.state.users)}
                      {this.state.users.map(user=>
-                            <tr key={user.bid}>
-                                <td>{user.bid}</td>
-                                <td>{user.btitle}</td>
-                                <td>{user.bname}</td>
-                                <td>{new Date(user.bdate).toLocaleString()}</td>
-                                <td>{user.bhit}</td>
+                            <tr key={user.id}>
+                                <td>{user.id}</td>
+                                <td>{user.name}</td>
+                                <td>{user.pw}</td>
+                                <td>{user.email}</td>
+                                <td>{user.email_check}</td>
+                                <td>{user.address1}</td>
+                                <td>{user.address2}</td>
+                                <td>{user.address3}</td>
+                                <td>{user.phone}</td>
+                                <td>{user.tel}</td>
+                                <td>{user.sms}</td>
+                                <td>{new Date(user.birth).toLocaleDateString()}</td>
+                                <td>{user.calender_check}</td>
+                                <td>{user.point}</td>
+                                <td>{new Date(user.join_date).toLocaleString()}</td>
+                                <td>{new Date(user.delete_date).toLocaleString()}</td>
+
                                 <td className="text-right">
-                                    
                                 <UncontrolledDropdown>
                                 <DropdownToggle
                                     className="btn-icon-only text-light"
