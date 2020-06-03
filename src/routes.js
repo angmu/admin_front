@@ -15,221 +15,221 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import Index from "views/analysis/Index.js";
-import Profile from "views/basic/Profile.js";
-import Tables from "views/board/Tables.js";
-import Member from "views/member/Member.js";
-
+import Index from 'views/analysis/Index.js';
+import Profile from 'views/basic/Profile.js';
+import Tables from 'views/board/Tables.js';
+import Member from 'views/member/Member.js';
 
 //MEMBER
-import MemberList from "views/member/MemberList.js";
-
+import MemberList from 'views/member/MemberList.js';
 
 //PRODUCT
-import ProductCRUD from "views/product/ProductCRUD.js";
+import ProductCRUD from 'views/product/ProductCRUD.js';
+
+//EVENT
+import EventList from 'views/board/EventList';
 
 var routes = [
   {
-    path: "/index",
-    name: "Analysis",
-    icon: ["ni ni-chart-bar-32 text-primary"],
+    path: '/index',
+    name: 'Analysis',
+    icon: ['ni ni-chart-bar-32 text-primary'],
     component: Index,
-    submenu:null,
+    submenu: null,
   },
   {
-    path: "/member",
-    name: "회원관리",
-    icon: ["ni ni-single-02", "ni ni-bold-down"],
+    path: '/member',
+    name: '회원관리',
+    icon: ['ni ni-single-02', 'ni ni-bold-down'],
     component: Member,
     submenu: [
       {
-        path: "/member/list",
-        name: "회원정보리스트",
-        icon: ["ni ni-fat-delete"],
+        path: '/member/list',
+        name: '회원정보리스트',
+        icon: ['ni ni-fat-delete'],
         component: MemberList,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "회원메일발송",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '회원메일발송',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "포인트관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '포인트관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
-    ]
+    ],
   },
   {
-    path: "/product",
-    name: "상품관리",
-    icon: ["ni ni-basket text-success","ni ni-bold-down"],
+    path: '/product',
+    name: '상품관리',
+    icon: ['ni ni-basket text-success', 'ni ni-bold-down'],
     component: Index,
-    submenu:[
+    submenu: [
       {
-        path: "/product/crud",
-        name: "상품등록/수정",
-        icon: ["ni ni-fat-delete"],
+        path: '/product/crud',
+        name: '상품등록/수정',
+        icon: ['ni ni-fat-delete'],
         component: ProductCRUD,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "카테고리관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '카테고리관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "상품문의글",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '상품문의글',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "재고관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '재고관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
-    ]
+    ],
   },
   {
-    path: "/index",
-    name: "주문관리",
-    icon: ["ni ni-credit-card text-danger","ni ni-bold-down"],
+    path: '/index',
+    name: '주문관리',
+    icon: ['ni ni-credit-card text-danger', 'ni ni-bold-down'],
     component: Index,
-    submenu:[
+    submenu: [
       {
-        path: "/member",
-        name: "주문내역",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '주문내역',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "결제관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '결제관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "미완료주문",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '미완료주문',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "반품/교환",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '반품/교환',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
-
-    ]
+    ],
   },
   {
-    path: "/tables",
-    name: "게시글관리",
-    icon: ["ni ni-bullet-list-67 text-red","ni ni-bold-down"],
+    path: '/board',
+    name: '게시글관리',
+    icon: ['ni ni-bullet-list-67 text-red', 'ni ni-bold-down'],
     component: Tables,
-    submenu:[
+    submenu: [
       {
-        path: "/tables",
-        name: "공지사항관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/tables',
+        name: '공지사항관리',
+        icon: ['ni ni-fat-delete'],
         component: Tables,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "이벤트글관리",
-        icon: ["ni ni-fat-delete"],
-        component: Member,
-        submenu:null,
+        path: '/board/event',
+        name: '이벤트글관리',
+        icon: ['ni ni-fat-delete'],
+        component: EventList,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "체험단관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '체험단관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "1:1문의 답변",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '1:1문의 답변',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "리뷰 답변",
-        icon:["ni ni-fat-delete"],
+        path: '/member',
+        name: '리뷰 답변',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "FAQ",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: 'FAQ',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
-    ]
+    ],
   },
   {
-    path: "/user-profile",
-    name: "기본 설정",
-    icon: ["ni ni-key-25 text-yellow", "ni ni-bold-down"],
+    path: '/user-profile',
+    name: '기본 설정',
+    icon: ['ni ni-key-25 text-yellow', 'ni ni-bold-down'],
     component: Profile,
-    submenu:[
+    submenu: [
       {
-        path: "/member",
-        name: "쿠폰관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '쿠폰관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "추가배송비관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '추가배송비관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "배너관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '배너관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "팝업관리",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '팝업관리',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
       {
-        path: "/member",
-        name: "쇼핑몰설정",
-        icon: ["ni ni-fat-delete"],
+        path: '/member',
+        name: '쇼핑몰설정',
+        icon: ['ni ni-fat-delete'],
         component: Member,
-        submenu:null,
+        submenu: null,
       },
-    ]
+    ],
   },
 ];
 export default routes;

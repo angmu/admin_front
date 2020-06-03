@@ -19,23 +19,32 @@ import {
   UncontrolledTooltip,
   CardBody,
   CardTitle,
+  Button,
 } from 'reactstrap';
 import React from 'react';
 import Header from 'components/Headers/Header.js';
-import UserList from '../../components/User/UserListComponent';
+import EventListComponent from '../../components/Event/EventListComponent';
+import WriteModal from '../../components/Event/WriteModal';
 
-export default function MemberList() {
+export default function EventList() {
   return (
     <>
       <Header />
       <Container className="mt--7" fluid>
         <Row>
           <Col>
-            <Card className="card-stats mb-4 mb-xl-0">
+            <Card className="card-stats mb-4 mb-xl-0" style={{ width: '100%' }}>
               <CardHeader className="bg-transparent border-0">
-                <h3 className="mb-0">회원리스트</h3>
+                <Row>
+                  <Col>
+                    <h3 className="mb-0">이벤트글관리</h3>
+                  </Col>
+                  <Col>
+                    <WriteModal buttonLabel={'이벤트 등록'} />
+                  </Col>
+                </Row>
               </CardHeader>
-              <UserList />
+              <EventListComponent />
             </Card>
           </Col>
         </Row>
