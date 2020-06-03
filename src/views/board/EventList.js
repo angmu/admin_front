@@ -40,7 +40,10 @@ export default function EventList() {
                     <h3 className="mb-0">이벤트글관리</h3>
                   </Col>
                   <Col>
-                    <WriteModal buttonLabel={'이벤트 등록'} />
+                    <WriteModal
+                      buttonLabel={'이벤트 등록'}
+                      className={'modal-dialog modal-xl'}
+                    />
                   </Col>
                 </Row>
               </CardHeader>
