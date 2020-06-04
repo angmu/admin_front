@@ -69,7 +69,11 @@ export default function RegisterForm({
             name="startTime"
             id="startTime"
             placeholder="date placeholder"
-            value={formVal.startTime ? formVal.startTime : '00:00'}
+            value={
+              formVal.startTime
+                ? formVal.startTime
+                : sendForm({ ...formVal, startTime: '00:00' })
+            }
             onChange={handleChange}
           />
         </Col>
@@ -94,7 +98,11 @@ export default function RegisterForm({
             name="endTime"
             id="endTime"
             placeholder="date placeholder"
-            value={formVal.endTime ? formVal.entTime : '23:59'}
+            value={
+              formVal.endTime
+                ? formVal.endTime
+                : sendForm({ ...formVal, endTime: '23:59' })
+            }
             onChange={handleChange}
           />
         </Col>
@@ -166,6 +174,7 @@ export default function RegisterForm({
         <Label for="exampleFile" sm={2}>
           첨부 쿠폰
         </Label>
+        <Col sm={5}></Col>
         <Col sm={4}>
           <FormText color="muted">이벤트에서 배포할 쿠폰입니다.</FormText>
           <span>{coupon}</span>

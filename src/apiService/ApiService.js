@@ -12,6 +12,12 @@ class ApiService {
   fetchCoupons() {
     return axios.get(FRONT_SERVICE_URL + `admin/couplist`);
   }
+
+  addEvent(data) {
+    return axios.post(FRONT_SERVICE_URL + `admin/elist`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
 }
 
 export default new ApiService();

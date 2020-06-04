@@ -11,6 +11,7 @@ import {
 } from 'reactstrap';
 import RegisterForm from './RegisterForm';
 import CouponList from '../Coupon/CouponListComponent';
+import ApiService from '../../apiService/ApiService';
 
 const WriteModal = (props) => {
   const { buttonLabel, className } = props;
@@ -43,7 +44,27 @@ const WriteModal = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formVal);
+
+    const formData = new FormData();
+
+    for (let [key, value] of Object.entries(formVal)) {
+      if (key !== 'thumbnailUrl' && key !== 'contextImgUrl')
+        formData.append(key, value);
+    }
+
+    formData.append('coupon', coupon.coupon_num);
+
+    for (let key of formData.entries()) {
+      console.log(`${key}`);
+    }
+
+    ApiService.addEvent(formData)
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => {
+        console.log('에러', err);
+      });
   };
 
   //쿠폰정보
