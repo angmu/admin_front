@@ -24,7 +24,7 @@ import {
 import React from 'react';
 import Header from 'components/Headers/Header.js';
 import EventListComponent from '../../components/Event/EventListComponent';
-import WriteModal from '../../components/Event/WriteModal';
+import WriteModal from '../../components/Event/WriteModalComponent';
 
 export default function EventList() {
   return (

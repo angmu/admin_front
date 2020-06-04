@@ -23,6 +23,7 @@ import {
 import React, { Component } from 'react';
 
 import ApiService from '../../apiService/ApiService';
+import { dateConverter } from '../utils/DateConverter';
 
 export default class EventListComponent extends Component {
   constructor(props) {
@@ -44,11 +45,6 @@ export default class EventListComponent extends Component {
         this.setState({ events: res.data });
       })
       .catch((err) => console.log('reloaEventList() Error!', err));
-  };
-
-  //Dateconverter
-  dateConverter = (day) => {
-    return new Date(day).toLocaleString();
   };
 
   //eventStateJudge
@@ -95,9 +91,9 @@ export default class EventListComponent extends Component {
         </thead>
         <tbody>
           {this.state.events.map((event) => {
-            const registDate = this.dateConverter(event.event_regist);
-            const startDate = this.dateConverter(event.event_start);
-            const endDate = this.dateConverter(event.event_end);
+            const registDate = dateConverter(event.event_regist);
+            const startDate = dateConverter(event.event_start);
+            const endDate = dateConverter(event.event_end);
 
             return (
               <tr key={event.event_num}>

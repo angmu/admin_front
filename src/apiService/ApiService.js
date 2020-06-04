@@ -9,6 +9,9 @@ class ApiService {
   fetchEvents(start, end) {
     return axios.get(FRONT_SERVICE_URL + `admin/elist/${start}/${end}`);
   }
+  fetchCoupons() {
+    return axios.get(FRONT_SERVICE_URL + `admin/couplist`);
+  }
 }
 
 export default new ApiService();

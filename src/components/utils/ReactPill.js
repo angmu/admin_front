@@ -15,6 +15,10 @@ class Editor extends React.Component {
 
   handleChange(html) {
     this.setState({ editorHtml: html });
+    this.props.sendForm({
+      ...this.props.formVal,
+      editorHtml: html,
+    });
   }
 
   handleThemeChange(newTheme) {
@@ -54,7 +58,6 @@ Editor.modules = {
       { indent: '-1' },
       { indent: '+1' },
     ],
-    ['link', 'image', 'video'],
     ['clean'],
   ],
   clipboard: {
@@ -78,9 +81,6 @@ Editor.formats = [
   'list',
   'bullet',
   'indent',
-  'link',
-  'image',
-  'video',
 ];
 
 /*
