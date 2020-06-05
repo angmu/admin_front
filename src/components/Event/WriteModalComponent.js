@@ -43,8 +43,7 @@ const WriteModal = (props) => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-
+  	//e.preventDefault();
     const formData = new FormData();
 
     for (let [key, value] of Object.entries(formVal)) {
@@ -52,7 +51,7 @@ const WriteModal = (props) => {
         formData.append(key, value);
     }
 
-    formData.append('coupon', coupon.coupon_num);
+    if (coupon) formData.append('coupon', coupon.coupon_num);
 
     for (let key of formData.entries()) {
       console.log(`${key}`);

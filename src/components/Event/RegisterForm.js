@@ -114,9 +114,10 @@ export default function RegisterForm({
         <Col sm={10}>
           <Input
             type="text"
-            name="text"
+            name="eventTitle"
             id="eventTitle"
             style={{ fontWeight: 'bold', color: 'black' }}
+            onChange={handleChange}
           />
         </Col>
       </FormGroup>

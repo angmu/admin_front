@@ -36,7 +36,7 @@ export default class EventListComponent extends Component {
   }
 
   componentDidMount() {
-    this.reloadUserList(1, 1);
+    this.reloadUserList(1, 100);
   }
 
   reloadUserList = (start, end) => {
@@ -50,7 +50,7 @@ export default class EventListComponent extends Component {
   //eventStateJudge
   eventState = (start, end) => {
     //현재 날짜
-    const now = new Date().toLocaleString();
+    const now = new Date().getTime();
     //현재 날짜 < 시작날짜 :진행예정
     if (now < start) {
       return (
@@ -103,7 +103,7 @@ export default class EventListComponent extends Component {
                 <td>{registDate}</td>
                 <td>{startDate}</td>
                 <td>{endDate}</td>
-                <td>{this.eventState(startDate, endDate)}</td>
+                <td>{this.eventState(event.event_start, event.event_end)}</td>
                 <td className="text-right">
                   <UncontrolledDropdown>
                     <DropdownToggle
