@@ -28,6 +28,8 @@ import ProductCRUD from 'views/product/ProductCRUD.js';
 
 //EVENT
 import EventList from 'views/board/EventList';
+//NOTICE
+import NoticeWrap from 'views/board/NoticeWrap';
 
 var routes = [
   {
@@ -145,10 +147,10 @@ var routes = [
     component: Tables,
     submenu: [
       {
-        path: '/tables',
+        path: '/board/notice',
         name: '공지사항관리',
         icon: ['ni ni-fat-delete'],
-        component: Tables,
+        component: NoticeWrap,
         submenu: null,
       },
       {
@@ -159,10 +161,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/board',
         name: '체험단관리',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: Tables,
         submenu: null,
       },
       {

@@ -18,6 +18,14 @@ class ApiService {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   }
+
+  fetchNotices() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/nlist');
+  }
+
+  addNotice(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/nlist', data);
+  }
 }
 
 export default new ApiService();

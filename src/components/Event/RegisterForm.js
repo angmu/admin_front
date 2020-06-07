@@ -1,14 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  CardImg,
-} from 'reactstrap';
+import React from 'react';
+import { Col, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import Editor from '../utils/ReactPill';
 
 export default function RegisterForm({
@@ -69,11 +60,7 @@ export default function RegisterForm({
             name="startTime"
             id="startTime"
             placeholder="date placeholder"
-            value={
-              formVal.startTime
-                ? formVal.startTime
-                : sendForm({ ...formVal, startTime: '00:00' })
-            }
+            value={formVal.startTime}
             onChange={handleChange}
           />
         </Col>
@@ -98,15 +85,12 @@ export default function RegisterForm({
             name="endTime"
             id="endTime"
             placeholder="date placeholder"
-            value={
-              formVal.endTime
-                ? formVal.endTime
-                : sendForm({ ...formVal, endTime: '23:59' })
-            }
+            value={formVal.endTime}
             onChange={handleChange}
           />
         </Col>
       </FormGroup>
+      <hr></hr>
       <FormGroup row>
         <Label for="eventTitle" sm={2}>
           글 제목
@@ -121,6 +105,7 @@ export default function RegisterForm({
           />
         </Col>
       </FormGroup>
+      <hr></hr>
       <FormGroup row>
         <Label for="eventContent" sm={2}>
           글 내용
@@ -129,6 +114,7 @@ export default function RegisterForm({
           <Editor formVal={formVal} sendForm={sendForm} />
         </Col>
       </FormGroup>
+      <hr></hr>
       <FormGroup row>
         <Label for="image1" sm={2}>
           이미지1(썸네일)
@@ -144,20 +130,24 @@ export default function RegisterForm({
             onChange={(e) => handleChangeFile(e, 1)}
           />
         </Col>
-        <Col sm={7}>
-          {formVal.thumbnailUrl ? (
-            <div style={{ width: '588px', height: '174px', margin: '0 auto' }}>
-              <img
-                src={formVal.thumbnailUrl}
-                alt="썸네일이미지"
-                style={{ width: 'inherit', height: 'inherit' }}
-              />
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </Col>
+        <FormGroup row>
+          <Col>
+            {formVal.thumbnailUrl ? (
+              <div>
+                <img
+                  className="img-fluid"
+                  src={formVal.thumbnailUrl}
+                  alt="썸네일이미지"
+                  style={{ width: '100%', paddingTop: '20px' }}
+                />
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </Col>
+        </FormGroup>
       </FormGroup>
+      <hr></hr>
       <FormGroup row>
         <Label for="image2" sm={2}>
           이미지2(본문)
@@ -171,13 +161,16 @@ export default function RegisterForm({
           />
         </Col>
       </FormGroup>
+      <hr></hr>
       <FormGroup row>
         <Label for="exampleFile" sm={2}>
           첨부 쿠폰
         </Label>
-        <Col sm={5}></Col>
-        <Col sm={4}>
+        <Col sm={5}>
+          {' '}
           <FormText color="muted">이벤트에서 배포할 쿠폰입니다.</FormText>
+        </Col>
+        <Col sm={4}>
           <span>{coupon}</span>
         </Col>
       </FormGroup>
