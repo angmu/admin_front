@@ -1,24 +1,9 @@
 import {
-  Badge,
-  Card,
-  CardHeader,
-  CardFooter,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
-  Container,
-  Row,
-  Col,
-  UncontrolledTooltip,
-  CardBody,
-  CardTitle,
 } from 'reactstrap';
 import React, { Component } from 'react';
 import ApiService from '../../apiService/ApiService';

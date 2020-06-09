@@ -27,7 +27,7 @@ export default function ProductList() {
 
   useEffect(() => {
     lodingData();
-    setTitle('상품 등록');
+    setTitle('새상품 등록');
     setSubject('상품 관리');
     setFormContent({
       first: '공지글 제목',

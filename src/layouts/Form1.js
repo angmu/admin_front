@@ -1,15 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  CardImg,
-  Row,
-} from 'reactstrap';
+import { Form } from 'reactstrap';
 import Editor from '../components/utils/ReactPill';
 
 export default function Form1({ context, handleSubmit }) {

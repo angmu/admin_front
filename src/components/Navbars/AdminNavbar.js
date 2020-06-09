@@ -15,25 +15,19 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 // reactstrap components
 import {
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Form,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Input,
-  InputGroup,
   Navbar,
   Nav,
   Container,
-  Media
-} from "reactstrap";
+  Media,
+} from 'reactstrap';
 
 class AdminNavbar extends React.Component {
   render() {
@@ -41,7 +35,10 @@ class AdminNavbar extends React.Component {
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
           <Container fluid>
-            <div style={{'color':'black', 'fontSize':'1.2em'}}>  {this.props.brandText}</div>
+            <div style={{ color: 'black', fontSize: '1.2em' }}>
+              {' '}
+              {this.props.brandText}
+            </div>
             <Nav className="align-items-center d-none d-md-flex" navbar>
               <UncontrolledDropdown nav>
                 <DropdownToggle className="pr-0" nav>
@@ -49,7 +46,7 @@ class AdminNavbar extends React.Component {
                     <span className="avatar avatar-sm rounded-circle">
                       <img
                         alt="..."
-                        src={require("assets/img/brand/favicon.png")}
+                        src={require('assets/img/brand/favicon.png')}
                       />
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
@@ -60,7 +57,10 @@ class AdminNavbar extends React.Component {
                   </Media>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-arrow" right>
-                  <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
+                  <DropdownItem
+                    href="#pablo"
+                    onClick={(e) => e.preventDefault()}
+                  >
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
                   </DropdownItem>

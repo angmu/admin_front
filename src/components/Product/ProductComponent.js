@@ -3,22 +3,9 @@ import classnames from 'classnames';
 
 import {
   Card,
-  CardImg,
-  CardText,
   CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button,
   Row,
   Col,
-  Container,
-  InputGroup,
-  InputGroupAddon,
-  Input,
-  InputGroupText,
-  Form,
-  FormGroup,
-  Label,
   TabContent,
   TabPane,
   Nav,
@@ -80,7 +67,7 @@ export default function ProductComponent(props) {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="12">
-                      <RegisterForm2 />
+                      <RegisterForm2 {...props} />
                     </Col>
                   </Row>
                 </TabPane>

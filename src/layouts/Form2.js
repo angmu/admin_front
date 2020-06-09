@@ -1,15 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  CardImg,
-  Row,
-} from 'reactstrap';
+import { Form } from 'reactstrap';
 import ProductComponent from '../components/Product/ProductComponent';
 
 export default function Form2(props) {

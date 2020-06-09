@@ -1,14 +1,5 @@
-import React, { useState, useContext } from 'react';
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Card,
-  CardBody,
-  CardText,
-} from 'reactstrap';
+import React, { useContext } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Form1 from './Form1';
 import Form2 from './Form2';
 
@@ -24,7 +15,13 @@ export function CustomModal(props) {
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={toggle} className={className}>
+    <Modal
+      isOpen={isOpen}
+      toggle={toggle}
+      className={className}
+      backdrop={'static'}
+      keyboard={false}
+    >
       <ModalHeader toggle={toggle}>{value.title}</ModalHeader>
       <ModalBody>
         {props.flag === 1 ? (
