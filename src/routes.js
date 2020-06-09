@@ -24,7 +24,7 @@ import Member from 'views/member/Member.js';
 import MemberList from 'views/member/MemberList.js';
 
 //PRODUCT
-import ProductCRUD from 'views/product/ProductCRUD.js';
+import ProductWrap from 'views/product/ProductWrap';
 
 //EVENT
 import EventList from 'views/board/EventList';
@@ -78,7 +78,7 @@ var routes = [
         path: '/product/crud',
         name: '상품등록/수정',
         icon: ['ni ni-fat-delete'],
-        component: ProductCRUD,
+        component: ProductWrap,
         submenu: null,
       },
       {

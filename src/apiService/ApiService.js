@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const FRONT_SERVICE_URL = 'http://192.168.0.159:8181/';
+const FRONT_SERVICE_URL = 'http://gongsam.dlinkddns.com:3000/';
 
 class ApiService {
   fetchUsers() {
@@ -27,6 +27,20 @@ class ApiService {
     return axios.post(FRONT_SERVICE_URL + 'admin/nlist', data, {
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+  //상품리스트
+  fetchProductList() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/plist');
+  }
+
+  //상품카테고리1
+  fetchProductCate1() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/plist/category/1');
+  }
+
+  //상품카테고리2
+  fetchProductCate2() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/plist/category/2');
   }
 }
 

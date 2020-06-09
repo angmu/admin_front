@@ -1,27 +1,4 @@
-import {
-  Badge,
-  Card,
-  CardHeader,
-  CardFooter,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
-  Table,
-  Container,
-  Row,
-  Col,
-  UncontrolledTooltip,
-  CardBody,
-  CardTitle,
-  Button,
-  Input,
-} from 'reactstrap';
+import { Card, CardHeader, Container, Row, Col, CardBody } from 'reactstrap';
 import React, { useState } from 'react';
 import Header from 'components/Headers/Header.js';
 import EventListComponent from '../../components/Event/EventListComponent';

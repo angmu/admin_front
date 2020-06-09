@@ -78,6 +78,7 @@ export default function NoticeList() {
         context={BoardContext}
         postData={postData}
         controllModal={controllModal}
+        flag={1}
       />
     </div>
   );

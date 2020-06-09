@@ -24,11 +24,13 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'assets/css/argon-dashboard-react.css';
 
 import AdminLayout from 'layouts/Admin.js';
+import ProductComponent from './components/Product/ProductComponent';
 
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+      <Route path="/test" component={ProductComponent} />
       <Redirect from="/" to="/admin/index" />
     </Switch>
   </BrowserRouter>,

@@ -1,0 +1,9 @@
+.thumbBox {
+    width: fit-content;
+}
+
+
+.nav-tabs>li>a:hover {
+    background-color: gainsboro !important;
+    color: #fff;
+}

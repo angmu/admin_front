@@ -10,6 +10,7 @@ import {
   CardText,
 } from 'reactstrap';
 import Form1 from './Form1';
+import Form2 from './Form2';
 
 export function CustomModal(props) {
   const { isOpen, toggle } = props;
@@ -26,7 +27,11 @@ export function CustomModal(props) {
     <Modal isOpen={isOpen} toggle={toggle} className={className}>
       <ModalHeader toggle={toggle}>{value.title}</ModalHeader>
       <ModalBody>
-        <Form1 {...props} handleSubmit={handleSubmit} />
+        {props.flag === 1 ? (
+          <Form1 {...props} handleSubmit={handleSubmit} />
+        ) : (
+          <Form2 {...props} />
+        )}
       </ModalBody>
       <ModalFooter>
         <Button color="success" type="submit" form="nm-board">
