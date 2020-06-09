@@ -23,6 +23,11 @@ export default function NoticeList() {
     });
   }, [setTitle, setSubject, setFormContent]);
 
+  //callback
+  const controllModal = (func) => {
+    func();
+  };
+
   //데이터 로딩
   const lodingData = () => {
     ApiService.fetchNotices()
@@ -36,12 +41,11 @@ export default function NoticeList() {
 
   //데이터 저장
   const postData = (data) => {
-    console.log(data);
     const filteredData = {
       n_title: data.formInput1,
       n_content: data.editorHtml,
     };
-    ApiService.addNotice(filteredData)
+    ApiService.addNotice(JSON.stringify(filteredData))
       .then((res) => {
         lodingData();
       })
@@ -73,6 +77,7 @@ export default function NoticeList() {
         contents={contents}
         context={BoardContext}
         postData={postData}
+        controllModal={controllModal}
       />
     </div>
   );

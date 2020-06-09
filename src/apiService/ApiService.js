@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const FRONT_SERVICE_URL = 'http://localhost:8181/';
+const FRONT_SERVICE_URL = 'http://192.168.0.159:8181/';
 
 class ApiService {
   fetchUsers() {
@@ -24,7 +24,9 @@ class ApiService {
   }
 
   addNotice(data) {
-    return axios.post(FRONT_SERVICE_URL + 'admin/nlist', data);
+    return axios.post(FRONT_SERVICE_URL + 'admin/nlist', data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 

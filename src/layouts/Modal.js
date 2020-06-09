@@ -18,6 +18,7 @@ export function CustomModal(props) {
 
   const handleSubmit = (e, data) => {
     props.postData(data);
+    props.controllModal();
     e.preventDefault();
   };
 
