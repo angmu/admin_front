@@ -30,7 +30,7 @@ export default function ProductComponent(props) {
         <Row>
           <Col md={4}>
             <strong>썸네일 이미지</strong>
-            <ProductThumb />
+            <ProductThumb {...props} />
           </Col>
           <Col md={8} style={{ margin: '0 auto' }}>
             <div>

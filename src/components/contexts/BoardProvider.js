@@ -23,6 +23,7 @@ const BoardProvider = ({ children }) => {
   };
 
   const sendData = (data) => {
+    console.log(data);
     setBoard((prevState) => {
       return {
         ...prevState,

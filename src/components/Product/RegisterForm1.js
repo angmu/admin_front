@@ -1,37 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button,
-  Row,
   Col,
-  Container,
   InputGroup,
   InputGroupAddon,
   Input,
   InputGroupText,
-  Form,
   FormGroup,
   Label,
 } from 'reactstrap';
 
-export default function RegisterForm1({ cateData1, cateData2 }) {
-  const [selectedOpt, cateSelect] = useState('03');
+export default function RegisterForm1({
+  cateData1,
+  cateData2,
+  context,
+  handleChange,
+}) {
+  const [selectedOpt, cateSelect] = useState({
+    cate_code_d1: '03',
+    cate_code_d2: 'CF002',
+  });
 
-  useEffect(() => {}, []);
+  //useContenxt
+  const { data, sendData } = useContext(context);
+
+  useEffect(() => {
+    sendData({
+      ...data,
+      ...selectedOpt,
+    });
+  }, [sendData, selectedOpt]);
 
   //category1에 해당하는 category2
   const cate2 = (c1Id) => {
     return cateData2.filter((c2) => c2.cate_code_d1 === c1Id);
   };
 
-  const handleChange = (e) => {
-    cateSelect(e.target.value);
+  //카테고리 선택이벤트
+  const handleCate = (e) => {
+    cateSelect({
+      ...selectedOpt,
+      [e.target.name]: e.target.value,
+    });
   };
+
+  //상세 설명 파일(backfile) 선택이벤트
+  const handleInfoImg = (e) => [
+    sendData({
+      ...data,
+      [e.target.name]: e.target.files[0],
+    }),
+  ];
 
   return (
     <div>
@@ -44,10 +62,10 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
           <Col sm={5}>
             <Input
               type="select"
-              name="select"
+              name="cate_code_d1"
               id="categorySelect"
-              value={selectedOpt}
-              onChange={handleChange}
+              value={selectedOpt.cate_code_d1}
+              onChange={handleCate}
               style={{ color: 'blue' }}
             >
               {cateData1.map((c1) => {
@@ -66,11 +84,12 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
           <Col sm={5}>
             <Input
               type="select"
-              name="select"
-              id="exampleSelect"
+              name="cate_code_d2"
+              id="category2Select"
               style={{ color: 'black' }}
+              onChange={handleCate}
             >
-              {cate2(selectedOpt).map((c2) => {
+              {cate2(selectedOpt.cate_code_d1).map((c2) => {
                 return (
                   <option value={c2.cate_code_d2} key={c2.cate_code_d2}>
                     {c2.cate_code_d2} : {c2.cate_name_d2}
@@ -85,16 +104,25 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
             상품이름
           </Label>
           <Col sm={10}>
-            <Input type="text" name="name" id="productName" />
+            <Input
+              type="text"
+              name="product_name"
+              id="product_name"
+              onChange={handleChange}
+            />
           </Col>
         </FormGroup>
         <FormGroup row>
-          <Label for="productCost" sm={2}>
+          <Label for="supply_price" sm={2}>
             원가
           </Label>
           <Col sm={5}>
             <InputGroup>
-              <Input placeholder="0" />
+              <Input
+                placeholder="0"
+                onChange={handleChange}
+                name="supply_price"
+              />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
               </InputGroupAddon>
@@ -108,9 +136,9 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
           <Col sm={5}>
             <Input
               type="text"
-              name="manufacture"
+              name="manufacturer"
               id="manufacture"
-              defaultValue="쟈뎅"
+              onChange={handleChange}
             />
           </Col>
         </FormGroup>
@@ -119,7 +147,12 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
             영양성분
           </Label>
           <Col sm={10}>
-            <Input type="text" name="nutrient" id="nutrient" />
+            <Input
+              type="text"
+              name="nutrient"
+              id="nutrient"
+              onChange={handleChange}
+            />
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -128,7 +161,13 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
           </Label>
           <Col sm={5}>
             <InputGroup>
-              <Input type="text" name="calorie" id="calorie" placeholder="0" />
+              <Input
+                type="text"
+                name="product_kcal"
+                id="calorie"
+                placeholder="0"
+                onChange={handleChange}
+              />
               <InputGroupAddon addonType="append">
                 <InputGroupText>kcal</InputGroupText>
               </InputGroupAddon>
@@ -142,9 +181,10 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
           <Col sm={10}>
             <Input
               type="text"
-              name="shelfLife"
+              name="shelf_life"
               id="shelfLife"
               placeholder="예) 제조일로부터 12개월"
+              onChange={handleChange}
             />
           </Col>
         </FormGroup>
@@ -153,7 +193,12 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
             포장재질
           </Label>
           <Col sm={10}>
-            <Input type="text" name="packaging" id="packaging" />
+            <Input
+              type="text"
+              name="packing"
+              id="packaging"
+              onChange={handleChange}
+            />
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -161,7 +206,12 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
             내용량
           </Label>
           <Col sm={10}>
-            <Input type="text" name="capacity" id="capacity" />
+            <Input
+              type="text"
+              name="capacity"
+              id="capacity"
+              onChange={handleChange}
+            />
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -169,7 +219,12 @@ export default function RegisterForm1({ cateData1, cateData2 }) {
             상세이미지
           </Label>
           <Col sm={10}>
-            <Input type="file" name="explainImg" id="explainImg" />
+            <Input
+              type="file"
+              name="back_image"
+              id="explainImg"
+              onChange={handleInfoImg}
+            />
           </Col>
         </FormGroup>
       </div>

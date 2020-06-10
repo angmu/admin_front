@@ -9,9 +9,9 @@ export function CustomModal(props) {
   const value = useContext(props.context);
 
   const handleSubmit = (e, data) => {
+    //e.preventDefault();
     props.postData(data);
     props.controllModal();
-    e.preventDefault();
   };
 
   return (

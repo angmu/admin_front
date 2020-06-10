@@ -3,20 +3,20 @@ import { Form } from 'reactstrap';
 import ProductComponent from '../components/Product/ProductComponent';
 
 export default function Form2(props) {
-  //form 내용들
-  const [data, storeData] = useState({});
-  const { setupData } = useContext(props.context);
+  //useContenxt
+  const { data, sendData } = useContext(props.context);
 
   const handleChange = (e) => {
-    storeData({
+    sendData({
       ...data,
       [e.target.name]: e.target.value,
     });
   };
+
   return (
     <Form onSubmit={(e) => props.handleSubmit(e, data)} id="nm-board">
       <div className="form-group">
-        <ProductComponent {...props} />
+        <ProductComponent {...props} handleChange={handleChange} />
       </div>
     </Form>
   );

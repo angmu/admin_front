@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button,
-  Row,
   Col,
-  Container,
   InputGroup,
   InputGroupAddon,
   Input,
   InputGroupText,
-  Form,
   FormGroup,
   Label,
 } from 'reactstrap';
 
-export default function RegisterForm2({ cateData1, cateData2 }) {
-  const handleChange = (e) => {};
+export default function RegisterForm2({ context, handleChange }) {
+  //판매가 상품가 동일하게
+  const handleCopy = () => {
+    console.log('sdfsdf');
+  };
 
   return (
     <div>
@@ -32,7 +25,12 @@ export default function RegisterForm2({ cateData1, cateData2 }) {
           </Label>
           <Col sm={5}>
             <InputGroup>
-              <Input placeholder="0" />
+              <Input
+                placeholder="0"
+                name="product_price"
+                onChange={handleChange}
+                onKeyUp={handleCopy}
+              />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
               </InputGroupAddon>
@@ -45,7 +43,11 @@ export default function RegisterForm2({ cateData1, cateData2 }) {
           </Label>
           <Col sm={5}>
             <InputGroup>
-              <Input placeholder="0" />
+              <Input
+                placeholder="0"
+                name="sales_price"
+                onChange={handleChange}
+              />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
               </InputGroupAddon>
@@ -64,6 +66,8 @@ export default function RegisterForm2({ cateData1, cateData2 }) {
                 max={999}
                 type="number"
                 step="1"
+                name="amount"
+                onChange={handleChange}
               />
               <InputGroupAddon addonType="append">개</InputGroupAddon>
             </InputGroup>
@@ -74,9 +78,18 @@ export default function RegisterForm2({ cateData1, cateData2 }) {
             상품상태
           </Label>
           <Col sm={5}>
-            <Input type="select" name="productState" id="productState">
-              <option>판매중</option>
-              <option>품절</option>
+            <Input
+              type="select"
+              name="product_state"
+              id="productState"
+              onChange={handleChange}
+              defaultValue={0}
+            >
+              <option disabled value="0">
+                선택
+              </option>
+              <option value="판매중">판매중</option>
+              <option value="품절">품절</option>
             </Input>
           </Col>
         </FormGroup>

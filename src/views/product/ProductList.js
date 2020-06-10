@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import Header from 'components/Headers/Header.js';
 import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
-import { dateConverter } from '../../components/utils/DateConverter';
 import { BoardContext } from '../../components/contexts/BoardProvider';
 
 const tableSubject = [
@@ -23,7 +22,9 @@ export default function ProductList() {
   //카테고리 2 데이터
   const [cateData2, setCate2] = useState([]);
 
-  const { setTitle, setSubject, setFormContent } = useContext(BoardContext);
+  const { setTitle, setSubject, setFormContent, data } = useContext(
+    BoardContext,
+  );
 
   useEffect(() => {
     lodingData();
@@ -56,6 +57,11 @@ export default function ProductList() {
       );
   };
 
+  //데이터 저장
+  const postData = () => {
+    console.log(data);
+  };
+
   const subject = tableSubject.map((subj, index) => (
     <th style={{ width: styled[index] }} scope="row" key={index}>
       {subj}
@@ -83,6 +89,7 @@ export default function ProductList() {
         contents={contents}
         cateData1={cateData1}
         cateData2={cateData2}
+        postData={postData}
       />
     </div>
   );

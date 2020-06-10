@@ -24,9 +24,7 @@ export default function NoticeList() {
   }, [setTitle, setSubject, setFormContent]);
 
   //callback
-  const controllModal = (func) => {
-    func();
-  };
+  const controllModal = (func) => {};
 
   //데이터 로딩
   const lodingData = () => {
