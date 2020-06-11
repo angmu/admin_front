@@ -42,6 +42,11 @@ class ApiService {
   fetchProductCate2() {
     return axios.get(FRONT_SERVICE_URL + 'admin/plist/category/2');
   }
+
+  //상품등록
+  addProduct(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/plist', data);
+  }
 }
 
 export default new ApiService();

@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import Resizer from 'react-image-file-resizer';
 import { Card, CardBody, Row, Col } from 'reactstrap';
 import '../../assets/css/product.css';
 
@@ -31,24 +32,38 @@ export default function ProductThumb(props) {
     event.preventDefault();
     let reader = new FileReader();
     let file = event.target.files[0];
+    let fileStore = '';
 
+    if (!file) {
+      return;
+    }
     const naming = event.target.name;
-
-    reader.onload = (function (theFile, naming) {
-      return function (e) {
-        setSrc({
-          ...imgSrc,
-          [naming]: [theFile],
-        });
-        setPrevUrl({
-          ...prevUrl,
-          [naming]: reader.result,
-        });
-        selectImg([naming]);
-      };
-    })(file, naming);
-
-    reader.readAsDataURL(file);
+    Resizer.imageFileResizer(
+      file,
+      348,
+      348,
+      'PNG',
+      100,
+      0,
+      (blob) => {
+        fileStore = blob;
+        reader.onload = (function (theFile, naming) {
+          return function (e) {
+            setSrc({
+              ...imgSrc,
+              [naming]: [theFile],
+            });
+            setPrevUrl({
+              ...prevUrl,
+              [naming]: reader.result,
+            });
+            selectImg([naming]);
+          };
+        })(fileStore, naming);
+        reader.readAsDataURL(fileStore);
+      },
+      'blob',
+    );
   };
 
   const clickHandler = (e, name) => {

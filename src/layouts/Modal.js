@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Form1 from './Form1';
 import Form2 from './Form2';
@@ -7,11 +7,12 @@ export function CustomModal(props) {
   const { isOpen, toggle } = props;
   const { className } = props;
   const value = useContext(props.context);
+  const { wideToggle } = useContext(props.context);
 
   const handleSubmit = (e, data) => {
-    //e.preventDefault();
+    e.preventDefault();
     props.postData(data);
-    props.controllModal();
+    //props.controllModal();
   };
 
   return (
@@ -27,7 +28,7 @@ export function CustomModal(props) {
         {props.flag === 1 ? (
           <Form1 {...props} handleSubmit={handleSubmit} />
         ) : (
-          <Form2 {...props} />
+          <Form2 {...props} handleSubmit={handleSubmit} />
         )}
       </ModalBody>
       <ModalFooter>

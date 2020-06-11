@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Form } from 'reactstrap';
 import ProductComponent from '../components/Product/ProductComponent';
-
+import Spinner from '../components/utils/Spinner';
 export default function Form2(props) {
   //useContenxt
   const { data, sendData } = useContext(props.context);
@@ -17,6 +17,7 @@ export default function Form2(props) {
     <Form onSubmit={(e) => props.handleSubmit(e, data)} id="nm-board">
       <div className="form-group">
         <ProductComponent {...props} handleChange={handleChange} />
+        <Spinner />
       </div>
     </Form>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Col,
   InputGroup,
@@ -11,8 +11,10 @@ import {
 
 export default function RegisterForm2({ context, handleChange }) {
   //판매가 상품가 동일하게
-  const handleCopy = () => {
-    console.log('sdfsdf');
+  const [productP, setPrice] = useState('');
+
+  const handleCopy = (e) => {
+    setPrice(e.target.value);
   };
 
   return (
@@ -47,6 +49,7 @@ export default function RegisterForm2({ context, handleChange }) {
                 placeholder="0"
                 name="sales_price"
                 onChange={handleChange}
+                defaultValue={productP}
               />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
@@ -61,7 +64,7 @@ export default function RegisterForm2({ context, handleChange }) {
           <Col sm={5}>
             <InputGroup>
               <Input
-                defaultValue="0"
+                placeholder="0"
                 min={0}
                 max={999}
                 type="number"

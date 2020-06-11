@@ -3,6 +3,7 @@ import Header from 'components/Headers/Header.js';
 import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
 import { BoardContext } from '../../components/contexts/BoardProvider';
+import { trackPromise } from 'react-promise-tracker';
 
 const tableSubject = [
   '상품번호',
@@ -22,9 +23,14 @@ export default function ProductList() {
   //카테고리 2 데이터
   const [cateData2, setCate2] = useState([]);
 
-  const { setTitle, setSubject, setFormContent, data } = useContext(
-    BoardContext,
-  );
+  const {
+    setTitle,
+    setSubject,
+    setFormContent,
+    data,
+    sendData,
+    tg,
+  } = useContext(BoardContext);
 
   useEffect(() => {
     lodingData();
@@ -59,7 +65,63 @@ export default function ProductList() {
 
   //데이터 저장
   const postData = () => {
-    console.log(data);
+    const valid = [
+      'amount',
+      'back_image',
+      'capacity',
+      'front_image1',
+      'front_image2',
+      'front_image3',
+      'manufacturer',
+      'nutrient',
+      'packing',
+      'product_kcal',
+      'product_name',
+      'product_price',
+      'product_state',
+      'shelf_life',
+      'supply_price',
+    ];
+    const lackList = [];
+    valid.forEach((tes) => {
+      if (!data[tes]) {
+        lackList.push(tes);
+      }
+    });
+
+    if (lackList.length !== 0) {
+      alert('입력되지 않은 항목: ' + lackList.join(' , '));
+      return;
+    }
+
+    const excludeReg = /^((?!image).)*$/;
+    const formData = new FormData();
+    for (let [key, value] of Object.entries(data)) {
+      if (excludeReg.test(key)) {
+        formData.append(key, value);
+      }
+    }
+
+    if (!data.sales_price) {
+      formData.append('sales_price', data.product_price);
+    }
+
+    formData.append('files', data.back_image);
+    formData.append('files', data.front_image1[0]);
+    formData.append('files', data.front_image2[0]);
+    formData.append('files', data.front_image3[0]);
+
+    trackPromise(
+      ApiService.addProduct(formData)
+        .then((res) => {
+          lodingData();
+          tg();
+        })
+        .catch((err) => {
+          console.log('상품등록 실패', err);
+          alert('상품 등록 에러');
+        }),
+    );
   };
 
   const subject = tableSubject.map((subj, index) => (
@@ -72,7 +134,9 @@ export default function ProductList() {
     return (
       <>
         <td>{cons.pro_num}</td>
-        <td>{cons.front_image1}</td>
+        <td>
+          <img src={cons.front_image1} alt="상품이미지"></img>
+        </td>
         <td>{cons.product_name}</td>
         <td>{cons.amount}</td>
         <td>{cons.product_state}</td>

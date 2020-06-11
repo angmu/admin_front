@@ -7,7 +7,7 @@ import {
   CardBody,
   Button,
 } from 'reactstrap';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import CustomTable from '../layouts/CustomTable';
 import '../assets/css/board.css';
 import CustomModal from '../layouts/Modal';
@@ -18,6 +18,11 @@ export default function Board(props) {
   const toggleModal = () => setModal(!modal);
 
   const value = useContext(props.context);
+  const { wideToggle } = useContext(props.context);
+
+  useEffect(() => {
+    wideToggle(setModal);
+  }, []);
 
   return (
     <Container className="mt--7" fluid>
