@@ -25,6 +25,8 @@ import MemberList from 'views/member/MemberList.js';
 
 //PRODUCT
 import ProductWrap from 'views/product/ProductWrap';
+//RELATED PRODUCT
+import RelatedProduct from 'views/product/RelatedProduct';
 
 //EVENT
 import EventList from 'views/board/EventList';
@@ -79,6 +81,13 @@ var routes = [
         name: '상품등록/수정',
         icon: ['ni ni-fat-delete'],
         component: ProductWrap,
+        submenu: null,
+      },
+      {
+        path: '/product/related',
+        name: '연관상품 등록',
+        icon: ['ni ni-fat-delete'],
+        component: RelatedProduct,
         submenu: null,
       },
       {

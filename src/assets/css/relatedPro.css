@@ -1,0 +1,8 @@
+.bodyWrap {
+  position: relative;
+  padding-top: 100px;
+}
+
+.table-responsive td {
+  text-align: right;
+}

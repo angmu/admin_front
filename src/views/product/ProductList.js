@@ -23,19 +23,14 @@ export default function ProductList() {
   //카테고리 2 데이터
   const [cateData2, setCate2] = useState([]);
 
-  const {
-    setTitle,
-    setSubject,
-    setFormContent,
-    data,
-    sendData,
-    tg,
-  } = useContext(BoardContext);
+  const { setTitle, setSubject, setFormContent, data, tg } = useContext(
+    BoardContext,
+  );
 
   useEffect(() => {
     lodingData();
     setTitle('새상품 등록');
-    setSubject('상품 관리');
+    setSubject('상품 등록/수정');
     setFormContent({
       first: '공지글 제목',
       second: '공지글 내용',

@@ -47,6 +47,11 @@ class ApiService {
   addProduct(data) {
     return axios.post(FRONT_SERVICE_URL + 'admin/plist', data);
   }
+
+  //연관상품 목록
+  fetchRelatedProduct() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/rplist');
+  }
 }
 
 export default new ApiService();
