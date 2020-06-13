@@ -7,8 +7,6 @@ import {
   CardBody,
   Button,
   CardFooter,
-  CardTitle,
-  CardText,
 } from 'reactstrap';
 import React, { useEffect, useState } from 'react';
 import CustomTable2 from '../../layouts/CustomTable2';
@@ -26,16 +24,33 @@ const tableSubject = [
   '연관상품5',
 ];
 const styled = ['15.0%', '25.0%', '12.0%', '12.0%', '12.0%', '12.0%', '12.0%'];
-
+const highlight = ['#fdfd96', '#dbffd6', '#ace7ff', '#ecd4ff', '#ffcbc1'];
 export default function RelatedProduct() {
   //상품 데이터
   const [productData, setProduct] = useState([]);
   //모달
   const [openModal, setModal] = useState(false);
+  //선택한 상품
+  const [selectedProduct, selectProduct] = useState('');
 
   //토글모달
-  const handleToggle = () => setModal(!openModal);
+  const handleToggle = (e, pronum, index) => {
+    setModal(!openModal);
 
+    //선택한 상품의 연관상품 데이터
+    const relatedInfo = productData.filter((pro) => pro.pro_num === pronum);
+    if (relatedInfo[0])
+      selectProduct({
+        pro_num: relatedInfo[0].pro_num,
+        pro_name: relatedInfo[0].pro_name,
+        rec_pro_num1: relatedInfo[0].rec_pro_num1,
+        rec_pro_num2: relatedInfo[0].rec_pro_num2,
+        rec_pro_num3: relatedInfo[0].rec_pro_num3,
+        rec_pro_num4: relatedInfo[0].rec_pro_num4,
+        rec_pro_num5: relatedInfo[0].rec_pro_num5,
+        index: index,
+      });
+  };
   useEffect(() => {
     loadingData();
   }, []);
@@ -61,16 +76,23 @@ export default function RelatedProduct() {
       cons.rec_pro_num2,
       cons.rec_pro_num3,
       cons.rec_pro_num4,
-      cons.rec_pro_num4,
+      cons.rec_pro_num5,
     ];
     return (
       <tr key={cons.pro_num}>
         <th>{cons.pro_num}</th>
-        <th>{cons.product_name}</th>
+        <td>{cons.product_name}</td>
         {elements.map((elel, index) => (
           <td key={index}>
-            {elel}
-            <Button outline color="warning" size="sm" onClick={handleToggle}>
+            <span style={{ background: highlight[index] }}>
+              <strong>{elel}</strong>
+            </span>
+            <Button
+              outline
+              color="warning"
+              size="sm"
+              onClick={(e) => handleToggle(e, cons.pro_num, index)}
+            >
               <i className="far fa-edit"></i>
             </Button>
           </td>
@@ -90,8 +112,15 @@ export default function RelatedProduct() {
               <CardBody>
                 <CustomTable2 tableSubject={subject} contents={contents} />
               </CardBody>
-              <ModalForR isOpen={openModal} toggle={handleToggle} />
-              <CardFooter>Footer</CardFooter>
+              <ModalForR
+                isOpen={openModal}
+                toggle={handleToggle}
+                selectedProduct={selectedProduct}
+                refresh={loadingData}
+              />
+              <CardFooter>
+                <h5>연관상품은 최대 5개까지 등록가능</h5>
+              </CardFooter>
             </Card>
           </Col>
         </Row>

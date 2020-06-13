@@ -15,13 +15,23 @@ import CustomTable2 from './CustomTable2';
 const tableSubject = ['상품번호', '상품이름', '상품이미지'];
 let filteredData = {};
 
-export default function ModalForR({ isOpen, toggle }) {
+export default function ModalForR({
+  isOpen,
+  toggle,
+  selectedProduct,
+  refresh,
+}) {
   const [otherProduct, setOther] = useState([]);
 
-  const [selectedProduct, setProduct] = useState({});
   const [nestedModal, setNestModal] = useState(false);
+
+  //already exist
+  const [exist, setExist] = useState(false);
+
   //토글모달
-  const handleToggle = () => setNestModal(!nestedModal);
+  const handleToggle = () => {
+    setNestModal(!nestedModal);
+  };
 
   //다른 상품 데이터 갖고오기
   useEffect(() => {
@@ -52,9 +62,81 @@ export default function ModalForR({ isOpen, toggle }) {
   //확정 버튼
   const okClick = () => {
     console.log('ok');
+    const sendData = JSON.stringify({
+      index: selectedProduct.index + 1,
+      targetId: selectedProduct.pro_num,
+      additionId: filteredData[0].pro_num,
+    });
+    ApiService.addRelatedProduct(sendData)
+      .then((res) => {
+        console.log(res);
+        handleToggle();
+        toggle();
+        refresh();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  //삭제버튼
+  const deleteClick = () => {
+    const sendData = JSON.stringify({
+      index: selectedProduct.index + 1,
+      targetId: selectedProduct.pro_num,
+    });
+    ApiService.SetNUllRelatedProduct(sendData)
+      .then((res) => {
+        console.log(res);
+        toggle();
+        refresh();
+      })
+      .catch((err) => console.log(err));
   };
 
   const contents = otherProduct.map((cons) => {
+    //만약 호출한 상품의 연관상품이 등록되어있을 때
+    const aex = selectedProduct[`rec_pro_num${selectedProduct.index + 1}`];
+    if (aex) {
+      if (!exist) {
+        setExist(true);
+      }
+      if (aex === cons.pro_num) {
+        return (
+          <tr key={cons.pro_num}>
+            <th style={{ textAlign: 'center', cursor: 'pointer' }}>
+              {cons.pro_num}
+            </th>
+            <td style={{ textAlign: 'center', cursor: 'pointer' }}>
+              {cons.product_name}
+            </td>
+            <td style={{ textAlign: 'center', cursor: 'pointer' }}>
+              <img
+                src={cons.front_image1}
+                alt="상품이미지"
+                style={{ width: '100px', height: '100px' }}
+              ></img>
+            </td>
+          </tr>
+        );
+      } else {
+        return null;
+      }
+    }
+
+    if (selectedProduct) {
+      if (exist) {
+        setExist(false);
+      }
+      if (
+        selectedProduct.pro_num === cons.pro_num ||
+        selectedProduct.rec_pro_num1 === cons.pro_num ||
+        selectedProduct.rec_pro_num2 === cons.pro_num ||
+        selectedProduct.rec_pro_num3 === cons.pro_num ||
+        selectedProduct.rec_pro_num4 === cons.pro_num ||
+        selectedProduct.rec_pro_num5 === cons.pro_num
+      ) {
+        return null;
+      }
+    }
     return (
       <tr key={cons.pro_num} onClick={() => rowClick(cons.pro_num)}>
         <th style={{ textAlign: 'center', cursor: 'pointer' }}>
@@ -74,6 +156,28 @@ export default function ModalForR({ isOpen, toggle }) {
     );
   });
 
+  //모달을 호출한 상품의 데이터 보여주기
+  const ownerObj = (pro_num) => {
+    const info = otherProduct.filter((pro) => pro.pro_num === pro_num);
+    if (info[0] !== undefined) {
+      return (
+        <Row>
+          <Col md={6} style={{ fontSize: '1.2em', color: '#f7703c' }}>
+            {info[0].pro_num} <br></br>
+            {info[0].product_name}
+          </Col>
+          <Col md={6}>
+            <img
+              src={info[0].front_image1}
+              alt={info[0].product_name}
+              style={{ width: '200px' }}
+            ></img>
+          </Col>
+        </Row>
+      );
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -83,10 +187,21 @@ export default function ModalForR({ isOpen, toggle }) {
       className="modal-dialog modal-xl"
     >
       <ModalHeader toggle={toggle}>
-        <strong>연관 상품 등록</strong>
+        <strong>연관 상품 {selectedProduct.index + 1} 등록</strong>
+        {ownerObj(selectedProduct.pro_num)}
       </ModalHeader>
       <ModalBody>
         <CustomTable2 tableSubject={subject} contents={contents} />
+        {exist ? (
+          <span>
+            연관 상품이 등록되어있습니다. 해당 연관상품을 삭제하시겠습니까?{' '}
+            <Button color="warning" onClick={deleteClick}>
+              삭제
+            </Button>
+          </span>
+        ) : (
+          ''
+        )}
       </ModalBody>
       <ModalFooter>
         <Modal isOpen={nestedModal} toggle={handleToggle} fade={false}>
@@ -105,7 +220,7 @@ export default function ModalForR({ isOpen, toggle }) {
                     <img
                       src={filteredData[0].front_image1}
                       alt="상품이미지"
-                      style={{ width: '200px', height: '200px' }}
+                      style={{ width: '200px' }}
                     ></img>
                   </Col>
                 </Row>

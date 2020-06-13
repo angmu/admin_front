@@ -52,6 +52,20 @@ class ApiService {
   fetchRelatedProduct() {
     return axios.get(FRONT_SERVICE_URL + 'admin/rplist');
   }
+
+  //연관상품 등록
+  addRelatedProduct(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/rplist', data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  //연관상품 삭제
+  SetNUllRelatedProduct(data) {
+    return axios.put(FRONT_SERVICE_URL + 'admin/rplist', data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
 
 export default new ApiService();

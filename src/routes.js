@@ -1,20 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Index from 'views/analysis/Index.js';
 import Profile from 'views/basic/Profile.js';
 import Tables from 'views/board/Tables.js';
@@ -49,7 +32,7 @@ var routes = [
     submenu: [
       {
         path: '/member/list',
-        name: '회원정보리스트',
+        name: '회원리스트',
         icon: ['ni ni-fat-delete'],
         component: MemberList,
         submenu: null,
@@ -63,7 +46,14 @@ var routes = [
       },
       {
         path: '/member',
-        name: '포인트관리',
+        name: '회원포인트관리',
+        icon: ['ni ni-fat-delete'],
+        component: Member,
+        submenu: null,
+      },
+      {
+        path: '/member',
+        name: '회원쿠폰관리',
         icon: ['ni ni-fat-delete'],
         component: Member,
         submenu: null,
@@ -85,7 +75,7 @@ var routes = [
       },
       {
         path: '/product/related',
-        name: '연관상품 등록',
+        name: '연관상품등록',
         icon: ['ni ni-fat-delete'],
         component: RelatedProduct,
         submenu: null,
@@ -99,14 +89,14 @@ var routes = [
       },
       {
         path: '/member',
-        name: '상품문의글',
+        name: '메인노출상품',
         icon: ['ni ni-fat-delete'],
         component: Member,
         submenu: null,
       },
       {
         path: '/member',
-        name: '재고관리',
+        name: '상품문의답변',
         icon: ['ni ni-fat-delete'],
         component: Member,
         submenu: null,
@@ -167,13 +157,6 @@ var routes = [
         name: '이벤트글관리',
         icon: ['ni ni-fat-delete'],
         component: EventList,
-        submenu: null,
-      },
-      {
-        path: '/board',
-        name: '체험단관리',
-        icon: ['ni ni-fat-delete'],
-        component: Tables,
         submenu: null,
       },
       {

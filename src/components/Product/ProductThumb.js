@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import Resizer from 'react-image-file-resizer';
 import { Card, CardBody, Row, Col } from 'reactstrap';
 import '../../assets/css/product.css';
+import Jimp from 'jimp';
 
 //썸네일 3개
 const thumbName = ['front_image1', 'front_image2', 'front_image3'];

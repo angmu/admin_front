@@ -51,6 +51,7 @@ export default function Board(props) {
                 </Col>
               </Row>
               <hr className="mt-3"></hr>
+              {props.searchBox ? props.searchBox : ''}
             </CardHeader>
             <CardBody>
               <CustomTable {...props} />

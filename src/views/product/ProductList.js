@@ -4,6 +4,7 @@ import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
 import { BoardContext } from '../../components/contexts/BoardProvider';
 import { trackPromise } from 'react-promise-tracker';
+import SearchBox from '../../layouts/SearchBox';
 
 const tableSubject = [
   '상품번호',
@@ -13,7 +14,7 @@ const tableSubject = [
   '공급상태',
   '현재판매가',
 ];
-const styled = ['10.0%', '50.0%', '20.0%', '8.0%'];
+const styled = ['10.0%', '', '20.0%', '8.0%'];
 
 export default function ProductList() {
   //상품데이터
@@ -130,7 +131,11 @@ export default function ProductList() {
       <>
         <td>{cons.pro_num}</td>
         <td>
-          <img src={cons.front_image1} alt="상품이미지"></img>
+          <img
+            src={cons.front_image1}
+            style={{ width: '100px' }}
+            alt="상품이미지"
+          ></img>
         </td>
         <td>{cons.product_name}</td>
         <td>{cons.amount}</td>
@@ -149,6 +154,7 @@ export default function ProductList() {
         cateData1={cateData1}
         cateData2={cateData2}
         postData={postData}
+        searchBox={SearchBox()}
       />
     </div>
   );
