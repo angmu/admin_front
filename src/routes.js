@@ -16,6 +16,9 @@ import EventList from 'views/board/EventList';
 //NOTICE
 import NoticeWrap from 'views/board/NoticeWrap';
 
+//CATEGORY
+import Category from 'views/category/Category';
+
 var routes = [
   {
     path: '/index',
@@ -81,10 +84,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/product/category',
         name: '카테고리관리',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: Category,
         submenu: null,
       },
       {
