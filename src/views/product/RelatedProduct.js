@@ -13,6 +13,9 @@ import CustomTable2 from '../../layouts/CustomTable2';
 import '../../assets/css/relatedPro.css';
 import ApiService from '../../apiService/ApiService';
 import ModalForR from '../../layouts/ModalForR';
+import $ from 'jquery';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
 const tableSubject = [
   '상품번호',
@@ -33,9 +36,16 @@ export default function RelatedProduct() {
   //선택한 상품
   const [selectedProduct, selectProduct] = useState('');
 
+  //선택된 row
+  const [selectedRow, selectRow] = useState('');
+
   //토글모달
-  const handleToggle = (e, pronum, index) => {
+  const handleToggle = (e, pronum, index, idx) => {
     setModal(!openModal);
+    selectRow(trRef[idx]);
+    if (selectedRow) {
+      $(selectedRow).fadeOut(200).fadeIn(300);
+    }
 
     //선택한 상품의 연관상품 데이터
     const relatedInfo = productData.filter((pro) => pro.pro_num === pronum);
@@ -51,9 +61,13 @@ export default function RelatedProduct() {
         index: index,
       });
   };
+
   useEffect(() => {
     loadingData();
   }, []);
+
+  //ref
+  let trRef = [];
 
   //데이터 로딩
   const loadingData = () => {
@@ -70,7 +84,7 @@ export default function RelatedProduct() {
     </th>
   ));
 
-  const contents = productData.map((cons) => {
+  const contents = productData.map((cons, idx) => {
     const elements = [
       cons.rec_pro_num1,
       cons.rec_pro_num2,
@@ -79,7 +93,7 @@ export default function RelatedProduct() {
       cons.rec_pro_num5,
     ];
     return (
-      <tr key={cons.pro_num}>
+      <tr key={cons.pro_num} ref={(tr) => (trRef[idx] = tr)}>
         <th>{cons.pro_num}</th>
         <td>{cons.product_name}</td>
         {elements.map((elel, index) => (
@@ -91,7 +105,7 @@ export default function RelatedProduct() {
               outline
               color="warning"
               size="sm"
-              onClick={(e) => handleToggle(e, cons.pro_num, index)}
+              onClick={(e) => handleToggle(e, cons.pro_num, index, idx)}
             >
               <i className="far fa-edit"></i>
             </Button>

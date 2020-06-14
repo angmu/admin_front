@@ -4,7 +4,7 @@ import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
 import { BoardContext } from '../../components/contexts/BoardProvider';
 import { trackPromise } from 'react-promise-tracker';
-import SearchBox from '../../layouts/SearchBox';
+import Search from '../../components/Product/ProductSearch';
 
 const tableSubject = [
   '상품번호',
@@ -12,9 +12,10 @@ const tableSubject = [
   '상품이름',
   '수량',
   '공급상태',
+  '상품가',
   '현재판매가',
 ];
-const styled = ['10.0%', '', '20.0%', '8.0%'];
+const styled = ['10.0%', '18.0%', '20.0%', '6.0%', '6.0%', '4.0%', '4.0%'];
 
 export default function ProductList() {
   //상품데이터
@@ -23,6 +24,8 @@ export default function ProductList() {
   const [cateData1, setCate1] = useState([]);
   //카테고리 2 데이터
   const [cateData2, setCate2] = useState([]);
+  //serial Number 매칭테이블
+  const [serialNumber, setSerial] = useState([]);
 
   const { setTitle, setSubject, setFormContent, data, tg } = useContext(
     BoardContext,
@@ -52,6 +55,11 @@ export default function ProductList() {
       .then(
         ApiService.fetchProductCate2().then((res) => {
           setCate2(res.data);
+        }),
+      )
+      .then(
+        ApiService.fetchSerialNumber().then((res) => {
+          setSerial(res.data);
         }),
       )
       .catch((err) =>
@@ -103,9 +111,9 @@ export default function ProductList() {
     }
 
     formData.append('files', data.back_image);
-    formData.append('files', data.front_image1[0]);
-    formData.append('files', data.front_image2[0]);
-    formData.append('files', data.front_image3[0]);
+    formData.append('files', data.front_image1);
+    formData.append('files', data.front_image2);
+    formData.append('files', data.front_image3);
 
     trackPromise(
       ApiService.addProduct(formData)
@@ -140,10 +148,56 @@ export default function ProductList() {
         <td>{cons.product_name}</td>
         <td>{cons.amount}</td>
         <td>{cons.product_state}</td>
-        <td>{cons.sales_price}</td>
+        <td>{cons.product_price}</td>
+        {cons.product_price !== cons.sales_price ? (
+          <td style={{ color: 'blue' }}> {cons.sales_price}</td>
+        ) : (
+          <td> {cons.sales_price}</td>
+        )}
       </>
     );
   });
+
+  //search
+  const searching = (opts) => {
+
+    (async()=> new Promise(resolve => lodingData(), resolve)()
+    .then(()=>{
+
+    }),
+
+
+
+
+    const { keyword, opt1, opt2 } = opts;
+
+    let filteredData = [...productData];
+    if (keyword !== '') {
+      filteredData = filteredData.filter((data) => {
+        return data.product_name.indexOf(keyword) > -1;
+      });
+    }
+
+    if (opt1 !== 0) {
+      const opt1Filter = serialNumber
+        .filter((data) => data.cate_code_d1 === opt1)
+        .map((data) => data.pro_num);
+
+      filteredData = filteredData.filter(
+        (data) => opt1Filter.indexOf(data.pro_num) >= 0,
+      );
+    }
+
+    console.log(filteredData);
+    // if(opt1!== 0){
+    //   filteredData = filteredData.filter((data)=>
+    //     serialNumber.filter(serial=> serial.cate_code_d1 === opt1)
+    //   )
+    // }
+
+    setProduct(filteredData);
+  };
+
   return (
     <div>
       <Header />
@@ -154,7 +208,7 @@ export default function ProductList() {
         cateData1={cateData1}
         cateData2={cateData2}
         postData={postData}
-        searchBox={SearchBox()}
+        searchBox={Search(cateData1, cateData2, searching)}
       />
     </div>
   );

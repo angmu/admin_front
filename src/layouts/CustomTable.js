@@ -10,7 +10,7 @@ export default function CustomTable(props) {
   const tableContents = props.contents.map((con, index) => (
     <tr key={index}>
       {con}
-      <td className="text-right">
+      <td className="text-right" style={{ width: '4.0%' }}>
         <UncontrolledDropdown>
           <DropdownToggle
             className="btn-icon-only text-light"

@@ -1,37 +1,102 @@
-import React, { Component } from 'react';
-import Resizer from 'react-image-file-resizer';
+import React from 'react';
 
-class FileTest extends Component {
-  constructor(props) {
-    super(props);
-    this.fileChangedHandler = this.fileChangedHandler.bind(this);
-  }
-
-  fileChangedHandler(event) {
-    var fileInput = false;
-    if (event.target.files[0]) {
-      fileInput = true;
-    }
-    if (fileInput) {
-      Resizer.imageFileResizer(
-        event.target.files[0],
-        300,
-        300,
-        'JPEG',
-        100,
-        0,
-        (uri) => {
-          console.log(uri);
-        },
-        'base64',
-      );
-    }
-  }
-
+class FileTest extends React.Component {
+  state = {
+    rows: [{}],
+  };
+  handleChange = (idx) => (e) => {
+    const { name, value } = e.target;
+    const rows = [...this.state.rows];
+    rows[idx] = {
+      [name]: value,
+    };
+    this.setState({
+      rows,
+    });
+  };
+  handleAddRow = () => {
+    const item = {
+      name: '',
+      mobile: '',
+    };
+    this.setState({
+      rows: [...this.state.rows, item],
+    });
+  };
+  handleRemoveRow = () => {
+    this.setState({
+      rows: this.state.rows.slice(0, -1),
+    });
+  };
+  handleRemoveSpecificRow = (idx) => () => {
+    const rows = [...this.state.rows];
+    rows.splice(idx, 1);
+    this.setState({ rows });
+  };
   render() {
     return (
-      <div className="App">
-        <input type="file" onChange={this.fileChangedHandler} />
+      <div>
+        <div className="container">
+          <div className="row clearfix">
+            <div className="col-md-12 column">
+              <table
+                className="table table-bordered table-hover"
+                id="tab_logic"
+              >
+                <thead>
+                  <tr>
+                    <th className="text-center"> # </th>
+                    <th className="text-center"> Name </th>
+                    <th className="text-center"> Mobile </th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.rows.map((item, idx) => (
+                    <tr id="addr0" key={idx}>
+                      <td>{idx}</td>
+                      <td>
+                        <input
+                          type="text"
+                          name="name"
+                          value={this.state.rows[idx].name}
+                          onChange={this.handleChange(idx)}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          name="mobile"
+                          value={this.state.rows[idx].mobile}
+                          onChange={this.handleChange(idx)}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={this.handleRemoveSpecificRow(idx)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button onClick={this.handleAddRow} className="btn btn-primary">
+                Add Row
+              </button>
+              <button
+                onClick={this.handleRemoveRow}
+                className="btn btn-danger float-right"
+              >
+                Delete Last Row
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

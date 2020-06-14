@@ -66,6 +66,35 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
+  //카테고리1 등록
+  addProductCate1(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/plist/category/1', data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  //카테고리2 등록
+  addProductCate2(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/plist/category/2', data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  //카테고리1 삭제
+  deleteProductCate1(data) {
+    return axios.delete(FRONT_SERVICE_URL + `admin/plist/category/1/${data}`);
+  }
+
+  //카테고리2 삭제
+  deleteProductCate2(data) {
+    return axios.delete(FRONT_SERVICE_URL + `admin/plist/category/2/${data}`);
+  }
+
+  //시리얼 넘버
+  fetchSerialNumber() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/plist/serial');
+  }
 }
 
 export default new ApiService();

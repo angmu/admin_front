@@ -38,6 +38,7 @@ export default function ProductComponent(props) {
                 <NavItem>
                   <NavLink
                     className={classnames({ active: activeTab === '1' })}
+                    style={{ cursor: 'pointer' }}
                     onClick={() => {
                       toggle('1');
                     }}
@@ -48,6 +49,7 @@ export default function ProductComponent(props) {
                 <NavItem>
                   <NavLink
                     className={classnames({ active: activeTab === '2' })}
+                    style={{ cursor: 'pointer' }}
                     onClick={() => {
                       toggle('2');
                     }}

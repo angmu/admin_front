@@ -33,38 +33,38 @@ export default function ProductThumb(props) {
     event.preventDefault();
     let reader = new FileReader();
     let file = event.target.files[0];
-    let fileStore = '';
-
     if (!file) {
       return;
     }
+    reader.readAsDataURL(file);
+
     const naming = event.target.name;
-    Resizer.imageFileResizer(
-      file,
-      348,
-      348,
-      'PNG',
-      100,
-      0,
-      (blob) => {
-        fileStore = blob;
-        reader.onload = (function (theFile, naming) {
-          return function (e) {
-            setSrc({
-              ...imgSrc,
-              [naming]: [theFile],
+
+    reader.onload = (function (naming) {
+      return function (e) {
+        Jimp.read(reader.result, (err, image) => {
+          if (err) throw err;
+          else {
+            image
+              .resize(348, 348)
+              .quality(100)
+              .getBase64(Jimp.MIME_PNG, function (err, src) {
+                setPrevUrl({
+                  ...prevUrl,
+                  [naming]: src,
+                });
+                selectImg([naming]);
+              });
+            image.getBufferAsync(Jimp.AUTO).then((newFile) => {
+              setSrc({
+                ...imgSrc,
+                [naming]: new Blob([newFile]),
+              });
             });
-            setPrevUrl({
-              ...prevUrl,
-              [naming]: reader.result,
-            });
-            selectImg([naming]);
-          };
-        })(fileStore, naming);
-        reader.readAsDataURL(fileStore);
-      },
-      'blob',
-    );
+          }
+        });
+      };
+    })(naming);
   };
 
   const clickHandler = (e, name) => {
