@@ -91,9 +91,14 @@ class ApiService {
     return axios.delete(FRONT_SERVICE_URL + `admin/plist/category/2/${data}`);
   }
 
-  //시리얼 넘버
+  //시리얼 넘버 다 가져오기
   fetchSerialNumber() {
     return axios.get(FRONT_SERVICE_URL + 'admin/plist/serial');
+  }
+
+  //상품 삭제
+  deleteProduct(data) {
+    return axios.delete(FRONT_SERVICE_URL + `admin/plist/${data}`);
   }
 }
 

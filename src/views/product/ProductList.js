@@ -31,8 +31,8 @@ export default function ProductList() {
   //search options
   const [searchOpt, setSearchOpt] = useState({
     keyword: '',
-    opt1: '0',
-    opt2: '0',
+    opt1: 0,
+    opt2: 0,
   });
   //현재 페이지
   const [curPage, setCurPage] = useState(1);
@@ -41,7 +41,7 @@ export default function ProductList() {
   // 검색결과 카운트
   let resultCnt = 0;
 
-  const { setTitle, setSubject, setFormContent, data, tg } = useContext(
+  const { setTitle, setSubject, setFormContent, data, tg, tg2 } = useContext(
     BoardContext,
   );
 
@@ -142,6 +142,19 @@ export default function ProductList() {
     );
   };
 
+  //상품 데이터 삭제
+  const deleteData = (data) => {
+    ApiService.deleteProduct(data)
+      .then((res) => {
+        alert(`${data} 상품이 삭제되었습니다.`);
+        lodingData();
+        tg2();
+      })
+      .catch((err) => {
+        alert('삭제 실패' + err.response.data);
+      });
+  };
+
   const subject = tableSubject.map((subj, index) => (
     <th style={{ width: styled[index] }} scope="row" key={index}>
       {subj}
@@ -161,7 +174,7 @@ export default function ProductList() {
     }
 
     //검색1 카테고리가 있을 경우
-    if (opt1 != 0) {
+    if (opt1 && opt1 != 0) {
       const opt1Filter = serialNumber
         .filter((data) => data.cate_code_d1 === opt1)
         .map((data) => data.pro_num);
@@ -172,7 +185,7 @@ export default function ProductList() {
     }
 
     //검색2 카테고리가 있을 경우
-    if (opt2 != 0) {
+    if (opt2 && opt2 != 0) {
       const opt2Filter = serialNumber
         .filter((data) => data.cate_code_d2 === opt2)
         .map((data) => data.pro_num);
@@ -184,7 +197,7 @@ export default function ProductList() {
     resultCnt = filteredData.length;
 
     //페이지나누기
-    filteredData = paginate(filteredData, curPage, pageSize, pageSize);
+    filteredData = paginate(filteredData, curPage, pageSize);
 
     return filteredData.map((cons) => {
       return (
@@ -231,6 +244,7 @@ export default function ProductList() {
         cateData1={cateData1}
         cateData2={cateData2}
         postData={postData}
+        deleteData={deleteData}
         searchBox={Search(cateData1, cateData2, searching)}
         pagination={Pagination(pageSize, resultCnt, curPage, handleChangePage)}
       />

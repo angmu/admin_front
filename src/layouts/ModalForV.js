@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import Form1 from './Form1';
 import Form2 from './Form2';
 
-export function CustomModal(props) {
+export function ModalForV(props) {
   const { isOpen, toggle } = props;
   const { className } = props;
   const value = useContext(props.context);
@@ -21,17 +20,13 @@ export function CustomModal(props) {
       backdrop={'static'}
       keyboard={false}
     >
-      <ModalHeader toggle={toggle}>{value.title}</ModalHeader>
+      <ModalHeader toggle={toggle}>제품 상세정보</ModalHeader>
       <ModalBody>
-        {props.flag === 1 ? (
-          <Form1 {...props} handleSubmit={handleSubmit} />
-        ) : (
-          <Form2 {...props} handleSubmit={handleSubmit} />
-        )}
+        <Form2 {...props} handleSubmit={handleSubmit} />
       </ModalBody>
       <ModalFooter>
-        <Button color="success" type="submit" form="nm-board">
-          등록
+        <Button color="warning" type="submit" form="nm-board">
+          저장
         </Button>{' '}
         <Button color="secondary" onClick={toggle}>
           취소
@@ -41,4 +36,4 @@ export function CustomModal(props) {
   );
 }
 
-export default CustomModal;
+export default ModalForV;

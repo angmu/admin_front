@@ -12,10 +12,7 @@ export default function Pagination({
 
   return (
     <nav>
-      <div
-        className="pagination justify-content-end mb-0 mr-3"
-        listClassName="justify-content-end mb-0"
-      >
+      <div className="pagination justify-content-end mb-0 mr-3">
         <ul className="pagination">
           {pages.map((page) => (
             <li

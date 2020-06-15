@@ -4,6 +4,8 @@ import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
 import { dateConverter } from '../../components/utils/DateConverter';
 import { BoardContext } from '../../components/contexts/BoardProvider';
+import Pagination from '../../components/Notice/NoticePagination';
+import { paginate } from '../../components/utils/Paginate';
 
 const tableSubject = ['글번호', '제목', '등록일', '조회수'];
 const styled = ['10.0%', '50.0%', '20.0%', '8.0%'];
@@ -11,7 +13,14 @@ const styled = ['10.0%', '50.0%', '20.0%', '8.0%'];
 export default function NoticeList() {
   const [noticeData, setNotice] = useState([]);
 
-  const { setTitle, setSubject, setFormContent } = useContext(BoardContext);
+  const { setTitle, setSubject, setFormContent, tg } = useContext(BoardContext);
+
+  //현재 페이지
+  const [curPage, setCurPage] = useState(1);
+  //한 페이지에 몇개 보여줄 건지..
+  const pageSize = 8;
+  // 데이터 카운트
+  const [resultCnt, setReslutCnt] = useState(0);
 
   useEffect(() => {
     lodingData();
@@ -31,6 +40,7 @@ export default function NoticeList() {
     ApiService.fetchNotices()
       .then((res) => {
         setNotice(res.data);
+        setReslutCnt(res.data.length);
       })
       .catch((err) =>
         console.log('공지데이터를 갖고 오는 것에 실패했습니다!', err),
@@ -46,8 +56,9 @@ export default function NoticeList() {
     ApiService.addNotice(JSON.stringify(filteredData))
       .then((res) => {
         lodingData();
+        tg();
       })
-      .catch((err) => console.log('공지데이터 저장 실패!', err));
+      .catch((err) => alert('공지데이터 저장 실패!' + err));
   };
 
   const subject = tableSubject.map((subj, index) => (
@@ -56,7 +67,7 @@ export default function NoticeList() {
     </th>
   ));
 
-  const contents = noticeData.map((cons) => {
+  const contents = paginate(noticeData, curPage, pageSize).map((cons) => {
     return (
       <>
         <td>{cons.n_num}</td>
@@ -66,6 +77,11 @@ export default function NoticeList() {
       </>
     );
   });
+
+  //page변경 핸들러
+  const handleChangePage = (page) => {
+    setCurPage(page);
+  };
 
   return (
     <div>
@@ -77,6 +93,7 @@ export default function NoticeList() {
         postData={postData}
         controllModal={controllModal}
         flag={1}
+        pagination={Pagination(pageSize, resultCnt, curPage, handleChangePage)}
       />
     </div>
   );
