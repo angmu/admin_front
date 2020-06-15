@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from 'react';
-import Resizer from 'react-image-file-resizer';
 import { Card, CardBody, Row, Col } from 'reactstrap';
 import '../../assets/css/product.css';
 import Jimp from 'jimp';

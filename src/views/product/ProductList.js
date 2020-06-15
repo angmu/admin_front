@@ -5,6 +5,8 @@ import ApiService from '../../apiService/ApiService';
 import { BoardContext } from '../../components/contexts/BoardProvider';
 import { trackPromise } from 'react-promise-tracker';
 import Search from '../../components/Product/ProductSearch';
+import Pagination from '../../components/Product/ProductPagination';
+import { paginate } from '../../components/utils/Paginate';
 
 const tableSubject = [
   '상품번호',
@@ -26,6 +28,18 @@ export default function ProductList() {
   const [cateData2, setCate2] = useState([]);
   //serial Number 매칭테이블
   const [serialNumber, setSerial] = useState([]);
+  //search options
+  const [searchOpt, setSearchOpt] = useState({
+    keyword: '',
+    opt1: '0',
+    opt2: '0',
+  });
+  //현재 페이지
+  const [curPage, setCurPage] = useState(1);
+  //한 페이지에 몇개 보여줄 건지..
+  const pageSize = 8;
+  // 검색결과 카운트
+  let resultCnt = 0;
 
   const { setTitle, setSubject, setFormContent, data, tg } = useContext(
     BoardContext,
@@ -134,51 +148,20 @@ export default function ProductList() {
     </th>
   ));
 
-  const contents = productData.map((cons) => {
-    return (
-      <>
-        <td>{cons.pro_num}</td>
-        <td>
-          <img
-            src={cons.front_image1}
-            style={{ width: '100px' }}
-            alt="상품이미지"
-          ></img>
-        </td>
-        <td>{cons.product_name}</td>
-        <td>{cons.amount}</td>
-        <td>{cons.product_state}</td>
-        <td>{cons.product_price}</td>
-        {cons.product_price !== cons.sales_price ? (
-          <td style={{ color: 'blue' }}> {cons.sales_price}</td>
-        ) : (
-          <td> {cons.sales_price}</td>
-        )}
-      </>
-    );
-  });
-
-  //search
-  const searching = (opts) => {
-
-    (async()=> new Promise(resolve => lodingData(), resolve)()
-    .then(()=>{
-
-    }),
-
-
-
-
-    const { keyword, opt1, opt2 } = opts;
-
+  const contents = () => {
+    //검색 필터
     let filteredData = [...productData];
+    const { keyword, opt1, opt2 } = searchOpt;
+
+    //검색어가 있을 경우
     if (keyword !== '') {
       filteredData = filteredData.filter((data) => {
         return data.product_name.indexOf(keyword) > -1;
       });
     }
 
-    if (opt1 !== 0) {
+    //검색1 카테고리가 있을 경우
+    if (opt1 != 0) {
       const opt1Filter = serialNumber
         .filter((data) => data.cate_code_d1 === opt1)
         .map((data) => data.pro_num);
@@ -188,14 +171,54 @@ export default function ProductList() {
       );
     }
 
-    console.log(filteredData);
-    // if(opt1!== 0){
-    //   filteredData = filteredData.filter((data)=>
-    //     serialNumber.filter(serial=> serial.cate_code_d1 === opt1)
-    //   )
-    // }
+    //검색2 카테고리가 있을 경우
+    if (opt2 != 0) {
+      const opt2Filter = serialNumber
+        .filter((data) => data.cate_code_d2 === opt2)
+        .map((data) => data.pro_num);
 
-    setProduct(filteredData);
+      filteredData = filteredData.filter(
+        (data) => opt2Filter.indexOf(data.pro_num) >= 0,
+      );
+    }
+    resultCnt = filteredData.length;
+
+    //페이지나누기
+    filteredData = paginate(filteredData, curPage, pageSize, pageSize);
+
+    return filteredData.map((cons) => {
+      return (
+        <>
+          <td>{cons.pro_num}</td>
+          <td>
+            <img
+              src={cons.front_image1}
+              style={{ width: '100px' }}
+              alt="상품이미지"
+            ></img>
+          </td>
+          <td>{cons.product_name}</td>
+          <td>{cons.amount}</td>
+          <td>{cons.product_state}</td>
+          <td>{cons.product_price}</td>
+          {cons.product_price !== cons.sales_price ? (
+            <td style={{ color: 'blue' }}> {cons.sales_price}</td>
+          ) : (
+            <td> {cons.sales_price}</td>
+          )}
+        </>
+      );
+    });
+  };
+
+  //search
+  const searching = (opts) => {
+    setSearchOpt(opts);
+  };
+
+  //page변경 핸들러
+  const handleChangePage = (page) => {
+    setCurPage(page);
   };
 
   return (
@@ -204,11 +227,12 @@ export default function ProductList() {
       <Board
         tableSubject={subject}
         context={BoardContext}
-        contents={contents}
+        contents={contents()}
         cateData1={cateData1}
         cateData2={cateData2}
         postData={postData}
         searchBox={Search(cateData1, cateData2, searching)}
+        pagination={Pagination(pageSize, resultCnt, curPage, handleChangePage)}
       />
     </div>
   );

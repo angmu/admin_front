@@ -6,6 +6,7 @@ import {
   Col,
   CardBody,
   Button,
+  CardFooter,
 } from 'reactstrap';
 import React, { useState, useContext, useEffect } from 'react';
 import CustomTable from '../layouts/CustomTable';
@@ -55,7 +56,11 @@ export default function Board(props) {
             </CardHeader>
             <CardBody>
               <CustomTable {...props} />
-            </CardBody>
+            </CardBody>{' '}
+            {/* 페이지네이션 */}
+            <CardFooter className="py-4">
+              {props.pagination ? props.pagination : ''}
+            </CardFooter>
           </Card>
         </Col>
       </Row>
