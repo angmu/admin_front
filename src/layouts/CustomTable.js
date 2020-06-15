@@ -10,7 +10,8 @@ import {
 } from 'reactstrap';
 import React, { useState, useContext, useEffect } from 'react';
 import ModalForV from './ModalForV';
-//사이드 메뉴가 있는 테이블
+
+//상품테이블
 export default function CustomTable(props) {
   const [modal, setModal] = useState(false);
   const toggleModal = () => setModal(!modal);
@@ -52,6 +53,15 @@ export default function CustomTable(props) {
               }}
             >
               편집
+            </DropdownItem>
+            <DropdownItem
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                selectCode(con.props.children[0].props.children);
+                toggleModal();
+              }}
+            >
+              상품복사
             </DropdownItem>
             <DropdownItem
               style={{ cursor: 'pointer' }}

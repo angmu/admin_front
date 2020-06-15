@@ -9,7 +9,7 @@ import {
   Label,
 } from 'reactstrap';
 
-export default function RegisterForm2({ context, handleChange, fD }) {
+export default function RegisterForm2({ handleChange, fD }) {
   //판매가 상품가 동일하게
   const [productP, setPrice] = useState('');
 

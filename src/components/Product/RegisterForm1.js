@@ -8,12 +8,20 @@ import {
   FormGroup,
   Label,
 } from 'reactstrap';
-
+import {
+  Magnifier,
+  GlassMagnifier,
+  SideBySideMagnifier,
+  PictureInPictureMagnifier,
+  MOUSE_ACTIVATION,
+  TOUCH_ACTIVATION,
+} from 'react-image-magnifiers';
 export default function RegisterForm1({
   cateData1,
   cateData2,
   context,
   handleChange,
+  fD,
 }) {
   const [selectedOpt, cateSelect] = useState({
     cate_code_d1: '03',
@@ -22,6 +30,15 @@ export default function RegisterForm1({
 
   //useContenxt
   const { data, sendData } = useContext(context);
+
+  useEffect(() => {
+    if (fD) {
+      cateSelect({
+        cate_code_d1: fD[1].cate_code_d1,
+        cate_code_d2: fD[1].cate_code_d2,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     sendData({
@@ -109,6 +126,7 @@ export default function RegisterForm1({
               name="product_name"
               id="product_name"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].product_name : ''}
             />
           </Col>
         </FormGroup>
@@ -122,6 +140,7 @@ export default function RegisterForm1({
                 placeholder="0"
                 onChange={handleChange}
                 name="supply_price"
+                defaultValue={fD ? fD[0].supply_price : ''}
               />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
@@ -139,6 +158,7 @@ export default function RegisterForm1({
               name="manufacturer"
               id="manufacture"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].manufacturer : ''}
             />
           </Col>
         </FormGroup>
@@ -152,6 +172,7 @@ export default function RegisterForm1({
               name="nutrient"
               id="nutrient"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].nutrient : ''}
             />
           </Col>
         </FormGroup>
@@ -167,6 +188,7 @@ export default function RegisterForm1({
                 id="calorie"
                 placeholder="0"
                 onChange={handleChange}
+                defaultValue={fD ? fD[0].product_kcal : ''}
               />
               <InputGroupAddon addonType="append">
                 <InputGroupText>kcal</InputGroupText>
@@ -185,6 +207,7 @@ export default function RegisterForm1({
               id="shelfLife"
               placeholder="예) 제조일로부터 12개월"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].shelf_life : ''}
             />
           </Col>
         </FormGroup>
@@ -198,6 +221,7 @@ export default function RegisterForm1({
               name="packing"
               id="packaging"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].packing : ''}
             />
           </Col>
         </FormGroup>
@@ -211,6 +235,7 @@ export default function RegisterForm1({
               name="capacity"
               id="capacity"
               onChange={handleChange}
+              defaultValue={fD ? fD[0].capacity : ''}
             />
           </Col>
         </FormGroup>
@@ -219,6 +244,21 @@ export default function RegisterForm1({
             상세이미지
           </Label>
           <Col sm={10}>
+            {fD ? (
+              <div>
+                <div>기존 업로드된 파일:</div>
+                <div style={{ width: '10%' }}>
+                  <SideBySideMagnifier
+                    imageSrc={fD[0].back_image}
+                    imageAlt="Example"
+                    switchSides={true}
+                    fillAvailableSpace={true}
+                  />
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <Input
               type="file"
               name="back_image"

@@ -14,7 +14,10 @@ export default function ProductThumb(props) {
   const [prevUrl, setPrevUrl] = useState([]);
 
   //선택된 이미지 파일
-  const [selectedImg, selectImg] = useState('');
+  const [selectedImg, selectImg] = useState('front_image1');
+
+  //edit mode
+  const [editData, onEditData] = useState([]);
 
   //useContenxt
   const { data, sendData } = useContext(props.context);
@@ -26,6 +29,12 @@ export default function ProductThumb(props) {
       ...imgSrc,
     });
   }, [sendData, imgSrc]);
+
+  useEffect(() => {
+    if (props.fD) {
+      onEditData(Object.assign({}, props.fD[0], props.fD[1]));
+    }
+  }, []);
 
   //파일 업로드 시 미리보기
   const handleFileOnChange = (event) => {
@@ -66,107 +75,45 @@ export default function ProductThumb(props) {
     })(naming);
   };
 
+  //add
   const clickHandler = (e, name) => {
     selectImg(name);
   };
 
-  if (props.fD) {
-    return (
-      <Card>
-        <CardBody style={{ width: 'fit-content' }}>
-          <Row>
-            <Col>
+  return (
+    <Card style={{}}>
+      <CardBody style={{ width: 'fit-content' }}>
+        <Row>
+          <Col>
+            {prevUrl[selectedImg] === undefined ? (
               <img
-                src={props.fD[0].front_image1}
+                src={
+                  editData[selectedImg]
+                    ? editData[selectedImg]
+                    : '/updefault.png'
+                }
                 alt="..."
                 className="img-thumbnail"
               ></img>
-            </Col>
-          </Row>
-          <Row className="mt-2 ml-1 thumbBox">
-            <img
-              src={props.fD[0].front_image1}
-              alt="..."
-              className="img-thumbnail"
-              style={{
-                width: '30%',
-                cursor: 'pointer',
-                marginRight: '0.2em',
-              }}
-            ></img>
-            <img
-              src={props.fD[0].front_image2}
-              alt="..."
-              className="img-thumbnail"
-              style={{
-                width: '30%',
-                cursor: 'pointer',
-                marginRight: '0.2em',
-              }}
-            ></img>
-            <img
-              src={props.fD[0].front_image3}
-              alt="..."
-              className="img-thumbnail"
-              style={{
-                width: '30%',
-                cursor: 'pointer',
-                marginRight: '0.2em',
-              }}
-            ></img>
-          </Row>
-        </CardBody>
-      </Card>
-    );
-  } else {
-    return (
-      <Card style={{}}>
-        <CardBody style={{ width: 'fit-content' }}>
-          <Row>
-            <Col>
-              {prevUrl[selectedImg] === undefined ? (
-                <img
-                  src="/updefault.png"
-                  alt="..."
-                  className="img-thumbnail"
-                ></img>
-              ) : (
-                <img
-                  src={prevUrl[selectedImg]}
-                  alt="..."
-                  className="img-thumbnail"
-                ></img>
-              )}
-            </Col>
-          </Row>
-          <Row className="mt-2 ml-1 thumbBox">
-            {thumbName.map((name) => {
-              if (prevUrl[name] === undefined) {
-                return (
-                  <label style={{ display: 'contents' }} key={name}>
-                    <img
-                      src="/upup.png"
-                      alt="..."
-                      className="img-thumbnail"
-                      style={{
-                        width: '30%',
-                        cursor: 'pointer',
-                        marginRight: '0.2em',
-                      }}
-                    ></img>
-                    <input
-                      type="file"
-                      name={name}
-                      style={{ display: 'none' }}
-                      onChange={(e) => handleFileOnChange(e)}
-                    ></input>
-                  </label>
-                );
-              } else {
-                return (
+            ) : (
+              <img
+                src={prevUrl[selectedImg]}
+                alt="..."
+                className="img-thumbnail"
+              ></img>
+            )}
+          </Col>
+        </Row>
+        <Row className="mt-2 ml-1 thumbBox">
+          {thumbName.map((name, index) => {
+            if (
+              prevUrl[name] === undefined &&
+              !editData[`front_image${[index + 1]}`]
+            ) {
+              return (
+                <label style={{ display: 'contents' }} key={name}>
                   <img
-                    key={name}
-                    src={prevUrl[name]}
+                    src={'/upup.png'}
                     alt="..."
                     className="img-thumbnail"
                     style={{
@@ -174,22 +121,46 @@ export default function ProductThumb(props) {
                       cursor: 'pointer',
                       marginRight: '0.2em',
                     }}
-                    onClick={(e) => clickHandler(e, name)}
                   ></img>
-                );
-              }
-            })}
-          </Row>
-          <Row>
-            <span
-              className="ml-3 mt-3"
-              style={{ color: 'gray', fontSize: '0.8em' }}
-            >
-              3개의 썸네일 이미지를 등록해야 합니다.
-            </span>
-          </Row>
-        </CardBody>
-      </Card>
-    );
-  }
+                  <input
+                    type="file"
+                    name={name}
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleFileOnChange(e)}
+                  ></input>
+                </label>
+              );
+            } else {
+              return (
+                <img
+                  key={name}
+                  src={
+                    editData[`front_image${[index + 1]}`]
+                      ? editData[`front_image${[index + 1]}`]
+                      : prevUrl[name]
+                  }
+                  alt="..."
+                  className="img-thumbnail"
+                  style={{
+                    width: '30%',
+                    cursor: 'pointer',
+                    marginRight: '0.2em',
+                  }}
+                  onClick={(e) => clickHandler(e, name)}
+                ></img>
+              );
+            }
+          })}
+        </Row>
+        <Row>
+          <span
+            className="ml-3 mt-3"
+            style={{ color: 'gray', fontSize: '0.8em' }}
+          >
+            3개의 썸네일 이미지를 등록해야 합니다.
+          </span>
+        </Row>
+      </CardBody>
+    </Card>
+  );
 }

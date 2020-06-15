@@ -214,7 +214,7 @@ export default function ProductList() {
           <td>{cons.amount}</td>
           <td>{cons.product_state}</td>
           <td>{cons.product_price}</td>
-          {cons.product_price !== cons.sales_price ? (
+          {cons.product_price > cons.sales_price ? (
             <td style={{ color: 'blue' }}> {cons.sales_price}</td>
           ) : (
             <td> {cons.sales_price}</td>
@@ -236,7 +236,10 @@ export default function ProductList() {
 
   //제품 하나에 대한 정보
   const oneInfo = (code) => {
-    return productData.filter((data) => data.pro_num === code);
+    return [
+      ...productData.filter((data) => data.pro_num === code),
+      ...serialNumber.filter((data) => data.pro_num === code),
+    ];
   };
 
   return (
