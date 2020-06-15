@@ -70,33 +70,103 @@ export default function ProductThumb(props) {
     selectImg(name);
   };
 
-  return (
-    <Card style={{}}>
-      <CardBody style={{ width: 'fit-content' }}>
-        <Row>
-          <Col>
-            {prevUrl[selectedImg] === undefined ? (
+  if (props.fD) {
+    return (
+      <Card>
+        <CardBody style={{ width: 'fit-content' }}>
+          <Row>
+            <Col>
               <img
-                src="/updefault.png"
+                src={props.fD[0].front_image1}
                 alt="..."
                 className="img-thumbnail"
               ></img>
-            ) : (
-              <img
-                src={prevUrl[selectedImg]}
-                alt="..."
-                className="img-thumbnail"
-              ></img>
-            )}
-          </Col>
-        </Row>
-        <Row className="mt-2 ml-1 thumbBox">
-          {thumbName.map((name) => {
-            if (prevUrl[name] === undefined) {
-              return (
-                <label style={{ display: 'contents' }} key={name}>
+            </Col>
+          </Row>
+          <Row className="mt-2 ml-1 thumbBox">
+            <img
+              src={props.fD[0].front_image1}
+              alt="..."
+              className="img-thumbnail"
+              style={{
+                width: '30%',
+                cursor: 'pointer',
+                marginRight: '0.2em',
+              }}
+            ></img>
+            <img
+              src={props.fD[0].front_image2}
+              alt="..."
+              className="img-thumbnail"
+              style={{
+                width: '30%',
+                cursor: 'pointer',
+                marginRight: '0.2em',
+              }}
+            ></img>
+            <img
+              src={props.fD[0].front_image3}
+              alt="..."
+              className="img-thumbnail"
+              style={{
+                width: '30%',
+                cursor: 'pointer',
+                marginRight: '0.2em',
+              }}
+            ></img>
+          </Row>
+        </CardBody>
+      </Card>
+    );
+  } else {
+    return (
+      <Card style={{}}>
+        <CardBody style={{ width: 'fit-content' }}>
+          <Row>
+            <Col>
+              {prevUrl[selectedImg] === undefined ? (
+                <img
+                  src="/updefault.png"
+                  alt="..."
+                  className="img-thumbnail"
+                ></img>
+              ) : (
+                <img
+                  src={prevUrl[selectedImg]}
+                  alt="..."
+                  className="img-thumbnail"
+                ></img>
+              )}
+            </Col>
+          </Row>
+          <Row className="mt-2 ml-1 thumbBox">
+            {thumbName.map((name) => {
+              if (prevUrl[name] === undefined) {
+                return (
+                  <label style={{ display: 'contents' }} key={name}>
+                    <img
+                      src="/upup.png"
+                      alt="..."
+                      className="img-thumbnail"
+                      style={{
+                        width: '30%',
+                        cursor: 'pointer',
+                        marginRight: '0.2em',
+                      }}
+                    ></img>
+                    <input
+                      type="file"
+                      name={name}
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileOnChange(e)}
+                    ></input>
+                  </label>
+                );
+              } else {
+                return (
                   <img
-                    src="/upup.png"
+                    key={name}
+                    src={prevUrl[name]}
                     alt="..."
                     className="img-thumbnail"
                     style={{
@@ -104,42 +174,22 @@ export default function ProductThumb(props) {
                       cursor: 'pointer',
                       marginRight: '0.2em',
                     }}
+                    onClick={(e) => clickHandler(e, name)}
                   ></img>
-                  <input
-                    type="file"
-                    name={name}
-                    style={{ display: 'none' }}
-                    onChange={(e) => handleFileOnChange(e)}
-                  ></input>
-                </label>
-              );
-            } else {
-              return (
-                <img
-                  key={name}
-                  src={prevUrl[name]}
-                  alt="..."
-                  className="img-thumbnail"
-                  style={{
-                    width: '30%',
-                    cursor: 'pointer',
-                    marginRight: '0.2em',
-                  }}
-                  onClick={(e) => clickHandler(e, name)}
-                ></img>
-              );
-            }
-          })}
-        </Row>
-        <Row>
-          <span
-            className="ml-3 mt-3"
-            style={{ color: 'gray', fontSize: '0.8em' }}
-          >
-            3개의 썸네일 이미지를 등록해야 합니다.
-          </span>
-        </Row>
-      </CardBody>
-    </Card>
-  );
+                );
+              }
+            })}
+          </Row>
+          <Row>
+            <span
+              className="ml-3 mt-3"
+              style={{ color: 'gray', fontSize: '0.8em' }}
+            >
+              3개의 썸네일 이미지를 등록해야 합니다.
+            </span>
+          </Row>
+        </CardBody>
+      </Card>
+    );
+  }
 }

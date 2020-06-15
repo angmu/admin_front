@@ -20,8 +20,8 @@ export default function CustomTable(props) {
   const toggleModal2 = () => setDModal(!dModal);
   const { wideToggle2 } = useContext(props.context);
 
-  //deletecode
-  const [deleteCode, setDeleteCode] = useState('');
+  //selectedcode
+  const [selectedCode, selectCode] = useState('');
 
   useEffect(() => {
     wideToggle2(setDModal);
@@ -44,13 +44,19 @@ export default function CustomTable(props) {
           </DropdownToggle>
 
           <DropdownMenu className="dropdown-menu-arrow" right>
-            <DropdownItem style={{ cursor: 'pointer' }} onClick={toggleModal}>
+            <DropdownItem
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                selectCode(con.props.children[0].props.children);
+                toggleModal();
+              }}
+            >
               편집
             </DropdownItem>
             <DropdownItem
               style={{ cursor: 'pointer' }}
               onClick={() => {
-                setDeleteCode(con.props.children[0].props.children);
+                selectCode(con.props.children[0].props.children);
                 toggleModal2();
               }}
             >
@@ -78,6 +84,7 @@ export default function CustomTable(props) {
         className={'modal-dialog modal-xl'}
         isOpen={modal}
         toggle={toggleModal}
+        selectedCode={selectedCode}
         {...props}
       />
       {/* 삭제 모달 */}
@@ -86,7 +93,7 @@ export default function CustomTable(props) {
           <h5 className="modal-title">상품 삭제</h5>
         </div>
         <div className="modal-body">
-          <p>{deleteCode}를 삭제하시겠습니까?</p>
+          <p>{selectedCode}를 삭제하시겠습니까?</p>
         </div>
         <div className="modal-footer">
           <button
@@ -99,7 +106,7 @@ export default function CustomTable(props) {
           <button
             type="button"
             className="btn btn-warning"
-            onClick={() => props.deleteData(deleteCode)}
+            onClick={() => props.deleteData(selectedCode)}
           >
             삭제
           </button>

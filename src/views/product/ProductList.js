@@ -234,6 +234,11 @@ export default function ProductList() {
     setCurPage(page);
   };
 
+  //제품 하나에 대한 정보
+  const oneInfo = (code) => {
+    return productData.filter((data) => data.pro_num === code);
+  };
+
   return (
     <div>
       <Header />
@@ -247,6 +252,7 @@ export default function ProductList() {
         deleteData={deleteData}
         searchBox={Search(cateData1, cateData2, searching)}
         pagination={Pagination(pageSize, resultCnt, curPage, handleChangePage)}
+        oneInfo={oneInfo}
       />
     </div>
   );

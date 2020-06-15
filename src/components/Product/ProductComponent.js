@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 
 import {
@@ -23,6 +23,12 @@ export default function ProductComponent(props) {
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
+
+  useEffect(() => {
+    if (props.fD) {
+      setActiveTab('2');
+    }
+  }, []);
 
   return (
     <Card>

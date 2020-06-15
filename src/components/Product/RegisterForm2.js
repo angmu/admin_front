@@ -9,7 +9,7 @@ import {
   Label,
 } from 'reactstrap';
 
-export default function RegisterForm2({ context, handleChange }) {
+export default function RegisterForm2({ context, handleChange, fD }) {
   //판매가 상품가 동일하게
   const [productP, setPrice] = useState('');
 
@@ -32,6 +32,7 @@ export default function RegisterForm2({ context, handleChange }) {
                 name="product_price"
                 onChange={handleChange}
                 onKeyUp={handleCopy}
+                defaultValue={fD ? fD[0].product_price : ''}
               />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
@@ -49,7 +50,7 @@ export default function RegisterForm2({ context, handleChange }) {
                 placeholder="0"
                 name="sales_price"
                 onChange={handleChange}
-                defaultValue={productP}
+                defaultValue={fD ? fD[0].sales_price : productP}
               />
               <InputGroupAddon addonType="append">
                 <InputGroupText>원</InputGroupText>
@@ -71,6 +72,7 @@ export default function RegisterForm2({ context, handleChange }) {
                 step="1"
                 name="amount"
                 onChange={handleChange}
+                defaultValue={fD ? fD[0].amount : 0}
               />
               <InputGroupAddon addonType="append">개</InputGroupAddon>
             </InputGroup>
@@ -86,7 +88,7 @@ export default function RegisterForm2({ context, handleChange }) {
               name="product_state"
               id="productState"
               onChange={handleChange}
-              defaultValue={0}
+              defaultValue={fD ? fD[0].product_state : 0}
             >
               <option disabled value="0">
                 선택

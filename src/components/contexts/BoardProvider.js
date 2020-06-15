@@ -66,6 +66,7 @@ const BoardProvider = ({ children }) => {
     subject: '',
     tg: null,
     tg2: null,
+    oneInfo: '',
     setTitle,
     setSubject,
     sendData,
