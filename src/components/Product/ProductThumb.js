@@ -24,10 +24,17 @@ export default function ProductThumb(props) {
 
   //useEffect
   useEffect(() => {
-    sendData({
-      ...data,
-      ...imgSrc,
-    });
+    if (props.fD) {
+      sendData({
+        ...data,
+        newImgSrc: imgSrc,
+      });
+    } else {
+      sendData({
+        ...data,
+        ...imgSrc,
+      });
+    }
   }, [sendData, imgSrc]);
 
   useEffect(() => {
@@ -80,12 +87,31 @@ export default function ProductThumb(props) {
     selectImg(name);
   };
 
+  //delete
+  const deleteHandler = (name) => {
+    console.log(name + '삭제를 원함');
+    setPrevUrl({
+      ...prevUrl,
+      [name]: null,
+    });
+    sendData({
+      ...data,
+      [name]: null,
+    });
+    if (editData) {
+      onEditData({
+        ...editData,
+        [name]: null,
+      });
+    }
+  };
+
   return (
     <Card style={{}}>
       <CardBody style={{ width: 'fit-content' }}>
         <Row>
           <Col>
-            {prevUrl[selectedImg] === undefined ? (
+            {!prevUrl[selectedImg] ? (
               <img
                 src={
                   editData[selectedImg]
@@ -104,50 +130,59 @@ export default function ProductThumb(props) {
             )}
           </Col>
         </Row>
-        <Row className="mt-2 ml-1 thumbBox">
+        <Row className="mt-2 thumbBox">
           {thumbName.map((name, index) => {
-            if (
-              prevUrl[name] === undefined &&
-              !editData[`front_image${[index + 1]}`]
-            ) {
+            if (!prevUrl[name] && !editData[`front_image${[index + 1]}`]) {
               return (
-                <label style={{ display: 'contents' }} key={name}>
-                  <img
-                    src={'/upup.png'}
-                    alt="..."
-                    className="img-thumbnail"
-                    style={{
-                      width: '30%',
-                      cursor: 'pointer',
-                      marginRight: '0.2em',
-                    }}
-                  ></img>
-                  <input
-                    type="file"
-                    name={name}
-                    style={{ display: 'none' }}
-                    onChange={(e) => handleFileOnChange(e)}
-                  ></input>
-                </label>
+                <Col stlye={{ padding: '0' }} key={name}>
+                  <label style={{ display: 'contents' }}>
+                    <img
+                      src={'/upup.png'}
+                      alt="..."
+                      className="img-thumbnail"
+                      style={{
+                        cursor: 'pointer',
+                        marginRight: '0.2em',
+                      }}
+                    ></img>
+                    <input
+                      type="file"
+                      name={name}
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileOnChange(e)}
+                    ></input>
+                  </label>
+                </Col>
               );
             } else {
               return (
-                <img
-                  key={name}
-                  src={
-                    editData[`front_image${[index + 1]}`]
-                      ? editData[`front_image${[index + 1]}`]
-                      : prevUrl[name]
-                  }
-                  alt="..."
-                  className="img-thumbnail"
-                  style={{
-                    width: '30%',
-                    cursor: 'pointer',
-                    marginRight: '0.2em',
-                  }}
-                  onClick={(e) => clickHandler(e, name)}
-                ></img>
+                <Col stlye={{ padding: '0' }} key={name}>
+                  <div style={{ position: 'relative' }}>
+                    <i
+                      style={{
+                        position: 'absolute',
+                        cursor: 'pointer',
+                        color: 'red',
+                      }}
+                      className="fas fa-times fa-lg"
+                      onClick={() => deleteHandler(name)}
+                    ></i>
+                    <img
+                      src={
+                        editData[`front_image${[index + 1]}`]
+                          ? editData[`front_image${[index + 1]}`]
+                          : prevUrl[name]
+                      }
+                      alt="..."
+                      className="img-thumbnail"
+                      style={{
+                        cursor: 'grab',
+                        marginRight: '0.2em',
+                      }}
+                      onClick={(e) => clickHandler(e, name)}
+                    ></img>
+                  </div>
+                </Col>
               );
             }
           })}

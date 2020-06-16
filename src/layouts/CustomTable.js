@@ -4,9 +4,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Modal,
-  ModalHeader,
-  ModalBody,
-  Button,
 } from 'reactstrap';
 import React, { useState, useContext, useEffect } from 'react';
 import ModalForV from './ModalForV';

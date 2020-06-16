@@ -8,14 +8,7 @@ import {
   FormGroup,
   Label,
 } from 'reactstrap';
-import {
-  Magnifier,
-  GlassMagnifier,
-  SideBySideMagnifier,
-  PictureInPictureMagnifier,
-  MOUSE_ACTIVATION,
-  TOUCH_ACTIVATION,
-} from 'react-image-magnifiers';
+import { SideBySideMagnifier } from 'react-image-magnifiers';
 export default function RegisterForm1({
   cateData1,
   cateData2,
@@ -54,19 +47,38 @@ export default function RegisterForm1({
 
   //카테고리 선택이벤트
   const handleCate = (e) => {
-    cateSelect({
-      ...selectedOpt,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === 'cate_code_d1') {
+      const fdata = cateData2.filter(
+        (c2) => c2.cate_code_d1 === e.target.value,
+      );
+      cateSelect({
+        ...selectedOpt,
+        [e.target.name]: e.target.value,
+        cate_code_d2: fdata[0].cate_code_d2,
+      });
+    } else if (e.target.name === 'cate_code_d2') {
+      cateSelect({
+        ...selectedOpt,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   //상세 설명 파일(backfile) 선택이벤트
-  const handleInfoImg = (e) => [
-    sendData({
-      ...data,
-      [e.target.name]: e.target.files[0],
-    }),
-  ];
+  const handleInfoImg = (e) => {
+    if (fD) {
+      fD[0].back_image = null;
+      sendData({
+        ...data,
+        newBackImg: e.target.files[0],
+      });
+    } else {
+      sendData({
+        ...data,
+        [e.target.name]: e.target.files[0],
+      });
+    }
+  };
 
   return (
     <div>
@@ -244,7 +256,7 @@ export default function RegisterForm1({
             상세이미지
           </Label>
           <Col sm={10}>
-            {fD ? (
+            {fD && fD[0].back_image ? (
               <div>
                 <div>기존 업로드된 파일:</div>
                 <div style={{ width: '10%' }}>

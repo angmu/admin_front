@@ -82,7 +82,35 @@ export default function ProductList() {
   };
 
   //데이터 저장
-  const postData = () => {
+  const postData = (fD) => {
+    let pData = Object.assign({}, data);
+    const isEdit = Array.isArray(fD);
+    //에딧 모드일경우
+    if (isEdit) {
+      console.log(pData);
+
+      //만약 백이미지를 새로 등록한 경우
+      if (pData.newBackImg) {
+        pData.back_image = pData.newBackImg;
+      }
+
+      //만약 front이미지를 새로 등록했을 경우
+      if (pData.newImgSrc) {
+        for (let [key, value] of Object.entries(pData.newImgSrc)) {
+          pData[key] = value;
+        }
+      }
+
+      //식별할 수 있게 아이디를 넣어준다
+      pData.pro_num = fD[0].pro_num;
+
+      //  editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
+      //  console.log(editData);
+      console.log(pData);
+    }
+    //에딧모드가 아닐경우
+
+    //유효성 검사
     const valid = [
       'amount',
       'back_image',
@@ -102,7 +130,7 @@ export default function ProductList() {
     ];
     const lackList = [];
     valid.forEach((tes) => {
-      if (!data[tes]) {
+      if (!pData[tes]) {
         lackList.push(tes);
       }
     });
@@ -114,32 +142,46 @@ export default function ProductList() {
 
     const excludeReg = /^((?!image).)*$/;
     const formData = new FormData();
-    for (let [key, value] of Object.entries(data)) {
+    for (let [key, value] of Object.entries(pData)) {
       if (excludeReg.test(key)) {
         formData.append(key, value);
       }
     }
 
-    if (!data.sales_price) {
-      formData.append('sales_price', data.product_price);
+    if (!pData.sales_price) {
+      formData.append('sales_price', pData.product_price);
     }
 
-    formData.append('files', data.back_image);
-    formData.append('files', data.front_image1);
-    formData.append('files', data.front_image2);
-    formData.append('files', data.front_image3);
+    formData.append('files', pData.back_image);
+    formData.append('files', pData.front_image1);
+    formData.append('files', pData.front_image2);
+    formData.append('files', pData.front_image3);
 
-    trackPromise(
-      ApiService.addProduct(formData)
-        .then((res) => {
-          lodingData();
-          tg();
-        })
-        .catch((err) => {
-          console.log('상품등록 실패', err);
-          alert('상품 등록 에러');
-        }),
-    );
+    if (isEdit) {
+      trackPromise(
+        ApiService.updateProduct(formData)
+          .then((res) => {
+            lodingData();
+            tg();
+          })
+          .catch((err) => {
+            console.log('상품수정 실패', err);
+            alert('상품 수정 에러');
+          }),
+      );
+    } else {
+      trackPromise(
+        ApiService.addProduct(formData)
+          .then((res) => {
+            lodingData();
+            tg();
+          })
+          .catch((err) => {
+            console.log('상품등록 실패', err);
+            alert('상품 등록 에러');
+          }),
+      );
+    }
   };
 
   //상품 데이터 삭제

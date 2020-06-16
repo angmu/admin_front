@@ -12,9 +12,9 @@ export function ModalForV(props) {
     filterData(oneInfo(selectedCode));
   }, [selectedCode]);
 
-  const handleSubmit = (e, data) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    props.postData(data);
+    props.postData(filteredData);
   };
 
   return (
