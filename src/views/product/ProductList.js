@@ -82,33 +82,28 @@ export default function ProductList() {
   };
 
   //데이터 저장
-  const postData = (fD) => {
+  const postData = (fD, mode) => {
     let pData = Object.assign({}, data);
-    const isEdit = Array.isArray(fD);
+    const isNotAdd = Array.isArray(fD);
     //에딧 모드일경우
-    if (isEdit) {
-      console.log(pData);
-
-      //만약 백이미지를 새로 등록한 경우
-      if (pData.newBackImg) {
-        pData.back_image = pData.newBackImg;
-      }
-
+    if (isNotAdd && mode === 'r') {
       //만약 front이미지를 새로 등록했을 경우
       if (pData.newImgSrc) {
         for (let [key, value] of Object.entries(pData.newImgSrc)) {
-          pData[key] = value;
+          pData[`new${key}`] = value;
         }
       }
 
-      //식별할 수 있게 아이디를 넣어준다
-      pData.pro_num = fD[0].pro_num;
+      //입력 안된부분은 기존 정보로 덮어쓰기
+      let editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
+      editData = Object.assign({}, editData, pData);
+      delete editData.registration_date;
+      delete editData.update_date;
 
-      //  editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
+      pData = editData;
       //  console.log(editData);
       console.log(pData);
     }
-    //에딧모드가 아닐경우
 
     //유효성 검사
     const valid = [
@@ -128,6 +123,7 @@ export default function ProductList() {
       'shelf_life',
       'supply_price',
     ];
+
     const lackList = [];
     valid.forEach((tes) => {
       if (!pData[tes]) {
@@ -135,29 +131,49 @@ export default function ProductList() {
       }
     });
 
+    //수정모드일 경우 예외항목
+    if (mode === 'r' && lackList.length > 0) {
+      for (let i = 1; i <= 3; i++) {
+        const index = lackList.indexOf(`front_image${i}`);
+        if (index > -1) {
+          if (pData.newImgSrc && pData.newImgSrc[`front_image${i}`]) {
+            lackList.splice(index, 1);
+          }
+        }
+      }
+    }
+
     if (lackList.length !== 0) {
       alert('입력되지 않은 항목: ' + lackList.join(' , '));
       return;
     }
 
-    const excludeReg = /^((?!image).)*$/;
     const formData = new FormData();
-    for (let [key, value] of Object.entries(pData)) {
-      if (excludeReg.test(key)) {
+    //수정모드일때는 해당안됨
+    if (mode !== 'r') {
+      const excludeReg = /^((?!image).)*$/;
+      for (let [key, value] of Object.entries(pData)) {
+        if (excludeReg.test(key)) {
+          formData.append(key, value);
+        }
+      }
+      if (!pData.sales_price) {
+        formData.append('sales_price', pData.product_price);
+      }
+
+      formData.append('files', pData.back_image);
+      formData.append('files', pData.front_image1);
+      formData.append('files', pData.front_image2);
+      formData.append('files', pData.front_image3);
+    } else {
+      //수정 모드일때
+      for (let [key, value] of Object.entries(pData)) {
         formData.append(key, value);
       }
     }
 
-    if (!pData.sales_price) {
-      formData.append('sales_price', pData.product_price);
-    }
-
-    formData.append('files', pData.back_image);
-    formData.append('files', pData.front_image1);
-    formData.append('files', pData.front_image2);
-    formData.append('files', pData.front_image3);
-
-    if (isEdit) {
+    //수정모드일때
+    if (mode === 'r') {
       trackPromise(
         ApiService.updateProduct(formData)
           .then((res) => {
@@ -169,6 +185,7 @@ export default function ProductList() {
             alert('상품 수정 에러');
           }),
       );
+    } else if (mode === 'c') {
     } else {
       trackPromise(
         ApiService.addProduct(formData)

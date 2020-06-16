@@ -14,7 +14,8 @@ export function ModalForV(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.postData(filteredData);
+    //수정모드
+    props.postData(filteredData, 'r');
   };
 
   return (

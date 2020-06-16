@@ -103,7 +103,6 @@ class ApiService {
 
   //상품 수정
   updateProduct(data) {
-    console.log(data);
     return axios.post(FRONT_SERVICE_URL + `admin/plistp`, data, {
       headers: { 'Content-Type': 'application/json' },
     });
