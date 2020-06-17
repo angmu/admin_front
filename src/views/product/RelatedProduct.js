@@ -13,8 +13,14 @@ import CustomTable2 from '../../layouts/CustomTable2';
 import '../../assets/css/relatedPro.css';
 import ApiService from '../../apiService/ApiService';
 import ModalForR from '../../layouts/ModalForR';
+//제이쿼리
 import $ from 'jquery';
 import jQuery from 'jquery';
+//페이지네이션
+import Pagination from '../../layouts/Pagination';
+import { paginate } from '../../components/utils/Paginate';
+//검색박스
+import SearchBoxBasic from '../../layouts/SearchBoxBasic';
 window.$ = window.jQuery = jQuery;
 
 const tableSubject = [
@@ -38,6 +44,28 @@ export default function RelatedProduct() {
 
   //선택된 row
   const [selectedRow, selectRow] = useState('');
+
+  //현재 페이지
+  const [curPage, setCurPage] = useState(1);
+  //한 페이지에 몇개 보여줄 건지..
+  const pageSize = 8;
+  // 검색결과 카운트
+  let resultCnt = 0;
+
+  //search options
+  const [searchOpt, setSearchOpt] = useState({
+    keyword: '',
+  });
+
+  //page변경 핸들러
+  const handleChangePage = (page) => {
+    setCurPage(page);
+  };
+
+  //search
+  const searching = (opts) => {
+    setSearchOpt(opts);
+  };
 
   //토글모달
   const handleToggle = (e, pronum, index, idx) => {
@@ -84,36 +112,53 @@ export default function RelatedProduct() {
     </th>
   ));
 
-  const contents = productData.map((cons, idx) => {
-    const elements = [
-      cons.rec_pro_num1,
-      cons.rec_pro_num2,
-      cons.rec_pro_num3,
-      cons.rec_pro_num4,
-      cons.rec_pro_num5,
-    ];
-    return (
-      <tr key={cons.pro_num} ref={(tr) => (trRef[idx] = tr)}>
-        <th>{cons.pro_num}</th>
-        <td>{cons.product_name}</td>
-        {elements.map((elel, index) => (
-          <td key={index}>
-            <span style={{ background: highlight[index] }}>
-              <strong>{elel}</strong>
-            </span>
-            <Button
-              outline
-              color="warning"
-              size="sm"
-              onClick={(e) => handleToggle(e, cons.pro_num, index, idx)}
-            >
-              <i className="far fa-edit"></i>
-            </Button>
-          </td>
-        ))}
-      </tr>
-    );
-  });
+  const contents = () => {
+    //필터링할 데이터
+    let filteredData = [...productData];
+
+    //검색 필터
+    const { keyword } = searchOpt;
+
+    //검색어가 있을 경우
+    if (keyword !== '') {
+      filteredData = productData.filter((data) => {
+        return data.product_name.indexOf(keyword) > -1;
+      });
+    }
+
+    resultCnt = filteredData.length;
+
+    return paginate(filteredData, curPage, pageSize).map((cons, idx) => {
+      const elements = [
+        cons.rec_pro_num1,
+        cons.rec_pro_num2,
+        cons.rec_pro_num3,
+        cons.rec_pro_num4,
+        cons.rec_pro_num5,
+      ];
+      return (
+        <tr key={cons.pro_num} ref={(tr) => (trRef[idx] = tr)}>
+          <th>{cons.pro_num}</th>
+          <td>{cons.product_name}</td>
+          {elements.map((elel, index) => (
+            <td key={index}>
+              <span style={{ background: highlight[index] }}>
+                <strong>{elel}</strong>
+              </span>
+              <Button
+                outline
+                color="warning"
+                size="sm"
+                onClick={(e) => handleToggle(e, cons.pro_num, index, idx)}
+              >
+                <i className="far fa-edit"></i>
+              </Button>
+            </td>
+          ))}
+        </tr>
+      );
+    });
+  };
   return (
     <div className="bodyWrap">
       <Container className="themed-container" fluid={true}>
@@ -122,9 +167,10 @@ export default function RelatedProduct() {
             <Card>
               <CardHeader>
                 <strong>연관 상품 등록</strong>
+                <SearchBoxBasic searching={searching} />
               </CardHeader>
               <CardBody>
-                <CustomTable2 tableSubject={subject} contents={contents} />
+                <CustomTable2 tableSubject={subject} contents={contents()} />
               </CardBody>
               <ModalForR
                 isOpen={openModal}
@@ -133,7 +179,13 @@ export default function RelatedProduct() {
                 refresh={loadingData}
               />
               <CardFooter>
-                <h5>연관상품은 최대 5개까지 등록가능</h5>
+                <Pagination
+                  itemsCount={resultCnt}
+                  pageSize={pageSize}
+                  currentPage={curPage}
+                  onPageChange={handleChangePage}
+                />
+                <h5> * 연관상품은 최대 5개까지 등록가능</h5>
               </CardFooter>
             </Card>
           </Col>

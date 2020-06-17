@@ -17,6 +17,7 @@ export default function CustomTable(props) {
 
   const toggleModal = (mode) => {
     setModal(!modal);
+    sendData(null);
     if (mode === 'r') {
       setMode('r');
     } else if (mode === 'c') {
@@ -28,7 +29,7 @@ export default function CustomTable(props) {
   const [dModal, setDModal] = useState(false);
   const toggleModal2 = () => setDModal(!dModal);
 
-  const { wideToggle2, wideToggle3 } = useContext(props.context);
+  const { wideToggle2, wideToggle3, sendData } = useContext(props.context);
 
   //selectedcode
   const [selectedCode, selectCode] = useState('');
