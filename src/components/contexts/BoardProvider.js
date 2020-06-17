@@ -70,6 +70,16 @@ const BoardProvider = ({ children }) => {
     });
   };
 
+  //checkbox filter
+  const checkToggle = (opt) => {
+    setBoard((prevState) => {
+      return {
+        ...prevState,
+        checkOpt: opt,
+      };
+    });
+  };
+
   //state초기화 객체 입니다.
   const initialState = {
     title: '',
@@ -78,6 +88,7 @@ const BoardProvider = ({ children }) => {
     tg2: null,
     tg3: null,
     oneInfo: '',
+    checkOpt: '',
     setTitle,
     setSubject,
     sendData,
@@ -85,6 +96,7 @@ const BoardProvider = ({ children }) => {
     wideToggle,
     wideToggle2,
     wideToggle3,
+    checkToggle,
   };
   //Hook을 통한 state, setState를 정의합니다.
   const [board, setBoard] = useState(initialState);

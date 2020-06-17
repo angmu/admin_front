@@ -12,6 +12,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import CustomTable from '../layouts/CustomTable';
 import '../assets/css/board.css';
 import CustomModal from '../layouts/Modal';
+import Checkbox from './Checkbox';
 
 export default function Board(props) {
   const [modal, setModal] = useState(false);
@@ -52,7 +53,14 @@ export default function Board(props) {
                 </Col>
               </Row>
               <hr className="mt-3"></hr>
-              {props.searchBox ? props.searchBox : ''}
+              <Row>
+                <Col lg={10} sm={10}>
+                  {props.searchBox ? props.searchBox : ''}
+                </Col>
+                <Col sm={2}>
+                  <Checkbox />
+                </Col>
+              </Row>
             </CardHeader>
             <CardBody>
               <CustomTable {...props} />

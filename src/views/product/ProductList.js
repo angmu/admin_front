@@ -50,6 +50,7 @@ export default function ProductList() {
     tg,
     tg2,
     tg3,
+    checkOpt,
   } = useContext(BoardContext);
 
   useEffect(() => {
@@ -245,8 +246,22 @@ export default function ProductList() {
   ));
 
   const contents = () => {
-    //검색 필터
+    //원본 데이터
     let filteredData = [...productData];
+    //체크 필터1
+    if (checkOpt.opt1 === false) {
+      filteredData = filteredData.filter((data) => {
+        return data.product_state !== '판매중';
+      });
+    }
+    //체크필터2
+    if (checkOpt.opt2 === false) {
+      filteredData = filteredData.filter((data) => {
+        return data.product_state !== '품절';
+      });
+    }
+
+    //검색 필터
     const { keyword, opt1, opt2 } = searchOpt;
 
     //검색어가 있을 경우
@@ -295,7 +310,11 @@ export default function ProductList() {
           </td>
           <td>{cons.product_name}</td>
           <td>{cons.amount}</td>
-          <td>{cons.product_state}</td>
+          {cons.product_state === '품절' ? (
+            <td style={{ color: 'red' }}>{cons.product_state}</td>
+          ) : (
+            <td>{cons.product_state}</td>
+          )}
           <td>{cons.product_price}</td>
           {cons.product_price > cons.sales_price ? (
             <td style={{ color: 'blue' }}> {cons.sales_price}</td>
