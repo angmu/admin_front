@@ -1,5 +1,6 @@
 import React from 'react';
 
+//기본형 테이블
 export default function CustomTable2(props) {
   return (
     <div className="table-responsive">

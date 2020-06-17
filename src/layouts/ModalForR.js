@@ -11,6 +11,11 @@ import {
   Col,
 } from 'reactstrap';
 import CustomTable2 from './CustomTable2';
+//페이지네이션
+import Pagination from './Pagination';
+import { paginate } from '../components/utils/Paginate';
+//검색박스
+import SearchBoxBasic from './SearchBoxBasic';
 
 const tableSubject = ['상품번호', '상품이름', '상품이미지'];
 let filteredData = {};
@@ -27,6 +32,29 @@ export default function ModalForR({
 
   //already exist
   const [exist, setExist] = useState(false);
+
+  //페이지네이션
+  //현재 페이지
+  const [curPage, setCurPage] = useState(1);
+  //한 페이지에 몇개 보여줄 건지..
+  const pageSize = 5;
+  // 검색결과 카운트
+  let resultCnt = 0;
+
+  //search options
+  const [searchOpt, setSearchOpt] = useState({
+    keyword: '',
+  });
+  //page변경 핸들러
+  const handleChangePage = (page) => {
+    setCurPage(page);
+  };
+
+  //search
+  const searching = (opts) => {
+    setSearchOpt(opts);
+    setCurPage(1);
+  };
 
   //토글모달
   const handleToggle = () => {
@@ -92,16 +120,64 @@ export default function ModalForR({
       .catch((err) => console.log(err));
   };
 
-  const contents = otherProduct.map((cons) => {
+  const contents = () => {
     //만약 호출한 상품의 연관상품이 등록되어있을 때
     const aex = selectedProduct[`rec_pro_num${selectedProduct.index + 1}`];
     if (aex) {
       if (!exist) {
         setExist(true);
       }
-      if (aex === cons.pro_num) {
+      const pda = otherProduct.filter((cons) => aex === cons.pro_num)[0];
+      if (aex === pda.pro_num) {
         return (
-          <tr key={cons.pro_num}>
+          <tr key={pda.pro_num}>
+            <th style={{ textAlign: 'center', cursor: 'pointer' }}>
+              {pda.pro_num}
+            </th>
+            <td style={{ textAlign: 'center', cursor: 'pointer' }}>
+              {pda.product_name}
+            </td>
+            <td style={{ textAlign: 'center', cursor: 'pointer' }}>
+              <img
+                src={pda.front_image1}
+                alt="상품이미지"
+                style={{ width: '100px', height: '100px' }}
+              ></img>
+            </td>
+          </tr>
+        );
+      }
+    } else {
+      if (selectedProduct) {
+        if (exist) {
+          setExist(false);
+        }
+      }
+      const oda = otherProduct.filter(
+        (cons) =>
+          selectedProduct.pro_num !== cons.pro_num &&
+          selectedProduct.rec_pro_num1 !== cons.pro_num &&
+          selectedProduct.rec_pro_num2 !== cons.pro_num &&
+          selectedProduct.rec_pro_num3 !== cons.pro_num &&
+          selectedProduct.rec_pro_num4 !== cons.pro_num &&
+          selectedProduct.rec_pro_num5 !== cons.pro_num,
+      );
+      //필터링할 데이터
+      let filteredData = [...oda];
+      //검색 필터
+      const { keyword } = searchOpt;
+
+      //검색어가 있을 경우
+      if (keyword !== '') {
+        filteredData = filteredData.filter((data) => {
+          return data.product_name.indexOf(keyword) > -1;
+        });
+      }
+      resultCnt = filteredData.length;
+
+      return paginate(filteredData, curPage, pageSize).map((cons) => {
+        return (
+          <tr key={cons.pro_num} onClick={() => rowClick(cons.pro_num)}>
             <th style={{ textAlign: 'center', cursor: 'pointer' }}>
               {cons.pro_num}
             </th>
@@ -117,44 +193,9 @@ export default function ModalForR({
             </td>
           </tr>
         );
-      } else {
-        return null;
-      }
+      });
     }
-
-    if (selectedProduct) {
-      if (exist) {
-        setExist(false);
-      }
-      if (
-        selectedProduct.pro_num === cons.pro_num ||
-        selectedProduct.rec_pro_num1 === cons.pro_num ||
-        selectedProduct.rec_pro_num2 === cons.pro_num ||
-        selectedProduct.rec_pro_num3 === cons.pro_num ||
-        selectedProduct.rec_pro_num4 === cons.pro_num ||
-        selectedProduct.rec_pro_num5 === cons.pro_num
-      ) {
-        return null;
-      }
-    }
-    return (
-      <tr key={cons.pro_num} onClick={() => rowClick(cons.pro_num)}>
-        <th style={{ textAlign: 'center', cursor: 'pointer' }}>
-          {cons.pro_num}
-        </th>
-        <td style={{ textAlign: 'center', cursor: 'pointer' }}>
-          {cons.product_name}
-        </td>
-        <td style={{ textAlign: 'center', cursor: 'pointer' }}>
-          <img
-            src={cons.front_image1}
-            alt="상품이미지"
-            style={{ width: '100px', height: '100px' }}
-          ></img>
-        </td>
-      </tr>
-    );
-  });
+  };
 
   //모달을 호출한 상품의 데이터 보여주기
   const ownerObj = (pro_num) => {
@@ -181,17 +222,33 @@ export default function ModalForR({
   return (
     <Modal
       isOpen={isOpen}
-      toggle={toggle}
+      toggle={() => {
+        toggle();
+        setCurPage(1);
+        setSearchOpt({
+          keyword: '',
+        });
+      }}
       backdrop={'static'}
       fade={false}
       className="modal-dialog modal-xl"
     >
-      <ModalHeader toggle={toggle}>
+      <ModalHeader
+        toggle={() => {
+          toggle();
+          setCurPage(1);
+          setSearchOpt({
+            keyword: '',
+          });
+        }}
+      >
         <strong>연관 상품 {selectedProduct.index + 1} 등록</strong>
         {ownerObj(selectedProduct.pro_num)}
       </ModalHeader>
+
+      {exist ? null : <SearchBoxBasic searching={searching} />}
       <ModalBody>
-        <CustomTable2 tableSubject={subject} contents={contents} />
+        <CustomTable2 tableSubject={subject} contents={contents()} />
         {exist ? (
           <span>
             연관 상품이 등록되어있습니다. 해당 연관상품을 삭제하시겠습니까?{' '}
@@ -204,6 +261,12 @@ export default function ModalForR({
         )}
       </ModalBody>
       <ModalFooter>
+        <Pagination
+          itemsCount={resultCnt}
+          pageSize={pageSize}
+          currentPage={curPage}
+          onPageChange={handleChangePage}
+        />
         <Modal isOpen={nestedModal} toggle={handleToggle} fade={false}>
           <ModalHeader>
             <strong>연관 상품</strong>

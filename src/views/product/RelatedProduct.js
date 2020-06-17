@@ -65,6 +65,7 @@ export default function RelatedProduct() {
   //search
   const searching = (opts) => {
     setSearchOpt(opts);
+    setCurPage(1);
   };
 
   //토글모달
