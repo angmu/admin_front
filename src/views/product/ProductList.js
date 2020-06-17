@@ -114,16 +114,6 @@ export default function ProductList() {
       console.log(pData);
     }
 
-    //카피모드일때
-    if (isNotAdd && mode === 'c') {
-      let editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
-      editData = Object.assign({}, editData, pData);
-      delete editData.registration_date;
-      delete editData.update_date;
-
-      pData = editData;
-    }
-
     //유효성 검사
     const valid = [
       'amount',
@@ -174,28 +164,35 @@ export default function ProductList() {
     }
 
     const formData = new FormData();
-    //수정모드일때는 해당안됨
+    //수정모드가 아닐 경우(삽입모드, 복사모드)
     if (mode !== 'r') {
       const excludeReg = /^((?!image).)*$/;
       for (let [key, value] of Object.entries(pData)) {
         if (excludeReg.test(key)) {
           formData.append(key, value);
+        } else {
+          if (typeof value === 'string') {
+            formData.append(key, value);
+          }
+          //만약 이미지가 경로라면 다시 폼에 집어넣는다(이미지 수정no)
         }
       }
       if (!pData.sales_price) {
         formData.append('sales_price', pData.product_price);
       }
 
-      formData.append('files', pData.back_image);
-      formData.append('files', pData.front_image1);
-      formData.append('files', pData.front_image2);
-      formData.append('files', pData.front_image3);
+      formData.append('file1', pData.back_image);
+      formData.append('file2', pData.front_image1);
+      formData.append('file3', pData.front_image2);
+      formData.append('file4', pData.front_image3);
     } else {
       //수정 모드일때
       for (let [key, value] of Object.entries(pData)) {
         formData.append(key, value);
       }
     }
+
+    console.log(pData);
 
     //수정모드일때
     if (mode === 'r') {
@@ -208,21 +205,21 @@ export default function ProductList() {
           })
           .catch((err) => {
             console.log('상품수정 실패', err);
-            alert('상품 수정 에러');
+            alert('상품 수정 에러' + err.response.data);
           }),
       );
-    } else if (mode === 'c') {
     } else {
       trackPromise(
         ApiService.addProduct(formData)
           .then((res) => {
             lodingData();
-            tg();
+            if (mode === 'c') tg3();
+            else tg();
             sendData(null);
           })
           .catch((err) => {
             console.log('상품등록 실패', err);
-            alert('상품 등록 에러');
+            alert('상품 등록 에러' + err.response.data);
           }),
       );
     }

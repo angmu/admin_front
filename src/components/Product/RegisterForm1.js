@@ -15,6 +15,7 @@ export default function RegisterForm1({
   context,
   handleChange,
   fD,
+  mode,
 }) {
   const [selectedOpt, cateSelect] = useState({
     cate_code_d1: '03',
@@ -66,7 +67,7 @@ export default function RegisterForm1({
 
   //상세 설명 파일(backfile) 선택이벤트
   const handleInfoImg = (e) => {
-    if (fD) {
+    if (fD && mode === 'r') {
       fD[0].back_image = null;
       sendData({
         ...data,

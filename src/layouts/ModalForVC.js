@@ -14,8 +14,8 @@ export function ModalForVC(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //수정모드
-    props.postData(filteredData, 'r');
+    //수정모드? 복사모드?
+    props.postData(filteredData, props.mode);
   };
 
   return (
