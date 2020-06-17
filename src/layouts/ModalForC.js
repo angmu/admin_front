@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Form2 from './Form2';
 
+//카피모드
 export function ModalForC(props) {
   const { isOpen, toggle, oneInfo, selectedCode } = props;
   const { className } = props;
@@ -25,13 +26,13 @@ export function ModalForC(props) {
       backdrop={'static'}
       keyboard={false}
     >
-      <ModalHeader toggle={toggle}>제품 상세정보</ModalHeader>
+      <ModalHeader toggle={toggle}>상품복사</ModalHeader>
       <ModalBody>
         <Form2 {...props} handleSubmit={handleSubmit} fD={filteredData} />
       </ModalBody>
       <ModalFooter>
         <Button color="warning" type="submit" form="nm-board">
-          저장
+          COPY
         </Button>{' '}
         <Button color="secondary" onClick={toggle}>
           취소

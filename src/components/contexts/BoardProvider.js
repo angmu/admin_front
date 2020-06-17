@@ -40,7 +40,7 @@ const BoardProvider = ({ children }) => {
     });
   };
 
-  //modal toggle
+  //modal toggle(상품등록)
   const wideToggle = (func) => {
     setBoard((prevState) => {
       return {
@@ -50,12 +50,22 @@ const BoardProvider = ({ children }) => {
     });
   };
 
-  //modla toggle2
+  //modal toggle2(상품삭제)
   const wideToggle2 = (func) => {
     setBoard((prevState) => {
       return {
         ...prevState,
         tg2: func,
+      };
+    });
+  };
+
+  //modal toggle2(상품수정)
+  const wideToggle3 = (func) => {
+    setBoard((prevState) => {
+      return {
+        ...prevState,
+        tg3: func,
       };
     });
   };
@@ -66,6 +76,7 @@ const BoardProvider = ({ children }) => {
     subject: '',
     tg: null,
     tg2: null,
+    tg3: null,
     oneInfo: '',
     setTitle,
     setSubject,
@@ -73,6 +84,7 @@ const BoardProvider = ({ children }) => {
     setFormContent,
     wideToggle,
     wideToggle2,
+    wideToggle3,
   };
   //Hook을 통한 state, setState를 정의합니다.
   const [board, setBoard] = useState(initialState);

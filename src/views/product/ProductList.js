@@ -41,9 +41,16 @@ export default function ProductList() {
   // 검색결과 카운트
   let resultCnt = 0;
 
-  const { setTitle, setSubject, setFormContent, data, tg, tg2 } = useContext(
-    BoardContext,
-  );
+  const {
+    setTitle,
+    setSubject,
+    setFormContent,
+    data,
+    sendData,
+    tg,
+    tg2,
+    tg3,
+  } = useContext(BoardContext);
 
   useEffect(() => {
     lodingData();
@@ -126,7 +133,7 @@ export default function ProductList() {
 
     const lackList = [];
     valid.forEach((tes) => {
-      if (!pData[tes]) {
+      if (pData[tes] === undefined || pData[tes] === null) {
         lackList.push(tes);
       }
     });
@@ -139,6 +146,12 @@ export default function ProductList() {
           if (pData.newImgSrc && pData.newImgSrc[`front_image${i}`]) {
             lackList.splice(index, 1);
           }
+        }
+      }
+      const index = lackList.indexOf('back_image');
+      if (index > -1) {
+        if (pData.newBackImg) {
+          lackList.splice(index, 1);
         }
       }
     }
@@ -178,7 +191,8 @@ export default function ProductList() {
         ApiService.updateProduct(formData)
           .then((res) => {
             lodingData();
-            tg();
+            tg3();
+            sendData(null);
           })
           .catch((err) => {
             console.log('상품수정 실패', err);
@@ -192,6 +206,7 @@ export default function ProductList() {
           .then((res) => {
             lodingData();
             tg();
+            sendData(null);
           })
           .catch((err) => {
             console.log('상품등록 실패', err);

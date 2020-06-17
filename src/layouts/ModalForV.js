@@ -10,7 +10,7 @@ export function ModalForV(props) {
 
   useEffect(() => {
     filterData(oneInfo(selectedCode));
-  }, [selectedCode]);
+  }, [oneInfo, selectedCode]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

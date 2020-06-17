@@ -10,19 +10,26 @@ import ModalForV from './ModalForV';
 
 //상품테이블
 export default function CustomTable(props) {
+  //insert modal
   const [modal, setModal] = useState(false);
   const toggleModal = () => setModal(!modal);
 
   //delete modal
   const [dModal, setDModal] = useState(false);
   const toggleModal2 = () => setDModal(!dModal);
-  const { wideToggle2 } = useContext(props.context);
+
+  //copy modal
+  const [cModal, setCModal] = useState(false);
+  const toggleModal3 = () => setCModal(!cModal);
+
+  const { wideToggle2, wideToggle3 } = useContext(props.context);
 
   //selectedcode
   const [selectedCode, selectCode] = useState('');
 
   useEffect(() => {
     wideToggle2(setDModal);
+    wideToggle3(setModal);
   }, []);
 
   const tableContents = props.contents.map((con, index) => (
@@ -55,7 +62,7 @@ export default function CustomTable(props) {
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 selectCode(con.props.children[0].props.children);
-                toggleModal();
+                toggleModal3();
               }}
             >
               상품복사

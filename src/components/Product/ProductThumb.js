@@ -35,7 +35,7 @@ export default function ProductThumb(props) {
         ...imgSrc,
       });
     }
-  }, [sendData, imgSrc]);
+  }, [sendData, imgSrc, editData]);
 
   useEffect(() => {
     if (props.fD) {
@@ -101,6 +101,10 @@ export default function ProductThumb(props) {
     if (editData) {
       onEditData({
         ...editData,
+        [name]: null,
+      });
+      setSrc({
+        ...imgSrc,
         [name]: null,
       });
     }
