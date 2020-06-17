@@ -24,7 +24,7 @@ export default function ProductThumb(props) {
 
   //useEffect
   useEffect(() => {
-    if (props.fD) {
+    if (props.fD && props.mode === 'c') {
       sendData({
         ...data,
         newImgSrc: imgSrc,

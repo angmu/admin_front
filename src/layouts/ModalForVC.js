@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Form2 from './Form2';
 
-//카피모드
-export function ModalForC(props) {
+export function ModalForVC(props) {
   const { isOpen, toggle, oneInfo, selectedCode } = props;
   const { className } = props;
 
@@ -11,11 +10,12 @@ export function ModalForC(props) {
 
   useEffect(() => {
     filterData(oneInfo(selectedCode));
-  }, [selectedCode]);
+  }, [oneInfo, selectedCode]);
 
-  const handleSubmit = (e, data) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    props.postData(data);
+    //수정모드
+    props.postData(filteredData, 'r');
   };
 
   return (
@@ -26,13 +26,18 @@ export function ModalForC(props) {
       backdrop={'static'}
       keyboard={false}
     >
-      <ModalHeader toggle={toggle}>상품복사</ModalHeader>
+      <ModalHeader toggle={toggle}>{props.title}</ModalHeader>
       <ModalBody>
-        <Form2 {...props} handleSubmit={handleSubmit} fD={filteredData} />
+        <Form2
+          {...props}
+          handleSubmit={handleSubmit}
+          fD={filteredData}
+          mode={props.mode}
+        />
       </ModalBody>
       <ModalFooter>
         <Button color="warning" type="submit" form="nm-board">
-          COPY
+          {props.btnText}
         </Button>{' '}
         <Button color="secondary" onClick={toggle}>
           취소
@@ -42,4 +47,4 @@ export function ModalForC(props) {
   );
 }
 
-export default ModalForC;
+export default ModalForVC;

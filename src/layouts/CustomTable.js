@@ -6,21 +6,27 @@ import {
   Modal,
 } from 'reactstrap';
 import React, { useState, useContext, useEffect } from 'react';
-import ModalForV from './ModalForV';
+import ModalForVC from './ModalForVC';
 
 //상품테이블
 export default function CustomTable(props) {
-  //insert modal
+  //update & copy modal
   const [modal, setModal] = useState(false);
-  const toggleModal = () => setModal(!modal);
+  //update or copy?
+  const [mode, setMode] = useState('');
 
-  //delete modal
+  const toggleModal = (mode) => {
+    setModal(!modal);
+    if (mode === 'r') {
+      setMode('r');
+    } else if (mode === 'c') {
+      setMode('c');
+    }
+  };
+
+  //delete odal
   const [dModal, setDModal] = useState(false);
   const toggleModal2 = () => setDModal(!dModal);
-
-  //copy modal
-  const [cModal, setCModal] = useState(false);
-  const toggleModal3 = () => setCModal(!cModal);
 
   const { wideToggle2, wideToggle3 } = useContext(props.context);
 
@@ -53,7 +59,7 @@ export default function CustomTable(props) {
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 selectCode(con.props.children[0].props.children);
-                toggleModal();
+                toggleModal('r');
               }}
             >
               편집
@@ -62,7 +68,7 @@ export default function CustomTable(props) {
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 selectCode(con.props.children[0].props.children);
-                toggleModal3();
+                toggleModal('c');
               }}
             >
               상품복사
@@ -93,14 +99,18 @@ export default function CustomTable(props) {
         </thead>
         <tbody>{tableContents}</tbody>
       </table>
-      {/* 상세정보 모달 */}
-      <ModalForV
+      {/* 상세정보, 편집 모달 */}
+      <ModalForVC
         className={'modal-dialog modal-xl'}
         isOpen={modal}
         toggle={toggleModal}
         selectedCode={selectedCode}
+        title={mode === 'r' ? '제품 상세정보' : '상품복사'}
+        btnText={mode === 'r' ? '저장' : 'COPY'}
+        mode={mode}
         {...props}
       />
+
       {/* 삭제 모달 */}
       <Modal isOpen={dModal} toggle={toggleModal2} fade={false}>
         <div className="modal-header">

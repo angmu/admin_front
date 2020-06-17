@@ -100,7 +100,10 @@ export default function ProductList() {
           pData[`new${key}`] = value;
         }
       }
+    }
 
+    //copy or update
+    if (isNotAdd) {
       //입력 안된부분은 기존 정보로 덮어쓰기
       let editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
       editData = Object.assign({}, editData, pData);
@@ -108,8 +111,17 @@ export default function ProductList() {
       delete editData.update_date;
 
       pData = editData;
-      //  console.log(editData);
       console.log(pData);
+    }
+
+    //카피모드일때
+    if (isNotAdd && mode === 'c') {
+      let editData = Object.assign({}, Object.assign({}, fD[0], fD[1]));
+      editData = Object.assign({}, editData, pData);
+      delete editData.registration_date;
+      delete editData.update_date;
+
+      pData = editData;
     }
 
     //유효성 검사
