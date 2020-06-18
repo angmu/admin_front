@@ -7,12 +7,10 @@ import {
   CardBody,
   Badge,
   CardFooter,
-  Button,
 } from 'reactstrap';
 import React, { useEffect, useState } from 'react';
 import CustomTable2 from '../../layouts/CustomTable2';
 import ApiService from '../../apiService/ApiService';
-import _ from 'lodash';
 
 //페이지네이션
 import Pagination from '../../layouts/Pagination';
@@ -108,7 +106,6 @@ export default function MainProduct() {
             if (dd.new_p) counting[2]++;
             if (dd.sale_p) counting[3]++;
           });
-          console.log(counting);
           checking(counting);
         }),
       )

@@ -55,10 +55,10 @@ export default function Board(props) {
               </Row>
               <hr className="mt-3"></hr>
               <Row>
-                <Col lg={10} sm={10}>
+                <Col lg={10} sm={12}>
                   {props.searchBox ? props.searchBox : ''}
                 </Col>
-                <Col sm={2}>{props.flag === 1 ? null : <Checkbox />}</Col>
+                <Col>{props.flag === 1 ? null : <Checkbox />}</Col>
               </Row>
             </CardHeader>
             <CardBody>

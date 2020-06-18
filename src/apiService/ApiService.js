@@ -119,6 +119,11 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
+  //상품문의글 불러오기
+  fetchProductQuestion() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/pqlist');
+  }
 }
 
 export default new ApiService();

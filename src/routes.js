@@ -12,6 +12,8 @@ import ProductWrap from 'views/product/ProductWrap';
 import RelatedProduct from 'views/product/RelatedProduct';
 //MAIN PORUDCT
 import MainProduct from 'views/product/MainProduct';
+//PRODUCT QUESTION
+import ProductQnA from 'views/product/ProductQnA';
 
 //EVENT
 import EventList from 'views/board/EventList';
@@ -100,10 +102,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/product/qna',
         name: '상품문의답변',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: ProductQnA,
         submenu: null,
       },
     ],
