@@ -7,6 +7,7 @@ import { trackPromise } from 'react-promise-tracker';
 import Search from '../../components/Product/ProductSearch';
 import Pagination from '../../components/Product/ProductPagination';
 import { paginate } from '../../components/utils/Paginate';
+import { dateConverter } from '../../components/utils/DateConverter';
 
 const tableSubject = [
   '상품번호',
@@ -16,8 +17,9 @@ const tableSubject = [
   '공급상태',
   '상품가',
   '현재판매가',
+  '등록일/최종수정일',
 ];
-const styled = ['10.0%', '18.0%', '20.0%', '6.0%', '6.0%', '4.0%', '4.0%'];
+const styled = ['', '', '', '', '', '', ''];
 
 export default function ProductList() {
   //상품데이터
@@ -319,8 +321,13 @@ export default function ProductList() {
           {cons.product_price > cons.sales_price ? (
             <td style={{ color: 'blue' }}> {cons.sales_price}</td>
           ) : (
-            <td> {cons.sales_price}</td>
+            <td style={{ fontSize: '0.7em' }}> {cons.sales_price}</td>
           )}
+          <td style={{ fontSize: '0.7em' }}>
+            {dateConverter(cons.registration_date)}
+            <br></br>
+            {dateConverter(cons.update_date)}
+          </td>
         </>
       );
     });
