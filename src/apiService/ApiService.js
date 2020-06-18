@@ -107,6 +107,18 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
+  //메인상품 갖고오기
+  fetchMainProduct() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/mplist');
+  }
+
+  //메인상품 업데이트하기
+  updateMainProduct(data) {
+    return axios.put(FRONT_SERVICE_URL + `admin/mplist`, data, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
 
 export default new ApiService();

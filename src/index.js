@@ -24,7 +24,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'assets/css/argon-dashboard-react.css';
 
 import AdminLayout from 'layouts/Admin.js';
-import Test from './components/test/FileTest';
+import Test from './components/test/PublicTest';
 
 ReactDOM.render(
   <BrowserRouter>

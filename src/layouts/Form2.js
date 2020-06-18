@@ -3,7 +3,7 @@ import { Form } from 'reactstrap';
 import ProductComponent from '../components/Product/ProductComponent';
 import Spinner from '../components/utils/Spinner';
 
-//product용
+//product 전용
 export default function Form2(props) {
   //useContenxt
   const { data, sendData } = useContext(props.context);

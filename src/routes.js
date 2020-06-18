@@ -10,6 +10,8 @@ import MemberList from 'views/member/MemberList.js';
 import ProductWrap from 'views/product/ProductWrap';
 //RELATED PRODUCT
 import RelatedProduct from 'views/product/RelatedProduct';
+//MAIN PORUDCT
+import MainProduct from 'views/product/MainProduct';
 
 //EVENT
 import EventList from 'views/board/EventList';
@@ -91,10 +93,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/product/main',
         name: '메인노출상품',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: MainProduct,
         submenu: null,
       },
       {

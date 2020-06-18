@@ -10,6 +10,7 @@ import {
 } from 'reactstrap';
 import React, { useState, useContext, useEffect } from 'react';
 import CustomTable from '../layouts/CustomTable';
+import CustomTableBoard from './CustomTableBoard';
 import '../assets/css/board.css';
 import CustomModal from '../layouts/Modal';
 import Checkbox from './Checkbox';
@@ -57,13 +58,15 @@ export default function Board(props) {
                 <Col lg={10} sm={10}>
                   {props.searchBox ? props.searchBox : ''}
                 </Col>
-                <Col sm={2}>
-                  <Checkbox />
-                </Col>
+                <Col sm={2}>{props.flag === 1 ? null : <Checkbox />}</Col>
               </Row>
             </CardHeader>
             <CardBody>
-              <CustomTable {...props} />
+              {props.flag === 1 ? (
+                <CustomTableBoard {...props} />
+              ) : (
+                <CustomTable {...props} />
+              )}
             </CardBody>{' '}
             {/* 페이지네이션 */}
             <CardFooter className="py-4">

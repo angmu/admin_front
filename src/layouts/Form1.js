@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Form } from 'reactstrap';
 import Editor from '../components/utils/ReactPill';
 
+// 파일첨부없는 기본 글쓰기
 export default function Form1({ context, handleSubmit }) {
   //form 내용들
   const [data, storeData] = useState({});
