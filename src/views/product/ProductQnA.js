@@ -6,6 +6,12 @@ import {
   Col,
   CardBody,
   CardFooter,
+  Collapse,
+  Button,
+  Badge,
+  FormGroup,
+  Label,
+  Input,
 } from 'reactstrap';
 import React, { Component } from 'react';
 import ApiService from '../../apiService/ApiService';
@@ -22,6 +28,8 @@ export default class ProductQnA extends Component {
     this.state = {
       data: null,
       currentPage: 1,
+      collapseOpen: [],
+      answerText: [],
     };
 
     this.tableSubject = [
@@ -67,6 +75,30 @@ export default class ProductQnA extends Component {
     });
   };
 
+  //collapse Open
+  toggle = (index) => {
+    const managedToggle = [...this.state.collapseOpen];
+    managedToggle[index] = !managedToggle[index];
+    this.setState({
+      collapseOpen: managedToggle,
+    });
+  };
+
+  //answer OK
+  answerBtnHandler = (index) => {
+    console.log('answerOK', index);
+  };
+
+  //answer Input
+  answerInputHandler = (e, index) => {
+    const inputText = [...this.state.answerText];
+    inputText[index] = e.target.value;
+
+    this.setState({
+      answerText: inputText,
+    });
+  };
+
   subject = () =>
     this.tableSubject.map((subj, index) => (
       <th style={{ width: this.styled[index] }} scope="row" key={index}>
@@ -79,22 +111,85 @@ export default class ProductQnA extends Component {
 
     let filteredData = this.state.data;
 
-    console.log(filteredData);
+    //console.log(filteredData);
     this.resultCnt = filteredData.length;
 
-    return paginate(filteredData, this.currentPage, this.pageSize).map(
+    filteredData = paginate(filteredData, this.currentPage, this.pageSize).map(
       (cons, index) => (
-        <tr key={cons.q_num}>
-          <td>{cons.q_num}</td>
-          <td>{cons.pro_num}</td>
-          <td>{cons.product_name}</td>
-          <td>{cons.id}</td>
-          <td style={{ fontSize: '0.92em' }}>{cons.q_title}</td>
-          <td style={{ fontSize: '0.75em' }}>{dateConverter(cons.q_date)}</td>
-          <td>답변대기</td>
-        </tr>
+        <React.Fragment key={cons.q_num}>
+          <tr
+            style={{
+              cursor: 'pointer',
+              background: this.state.collapseOpen[index] ? '#FAFAD2' : 'white',
+            }}
+            onClick={() => this.toggle(index)}
+          >
+            <td>{cons.q_num}</td>
+            <td>{cons.pro_num}</td>
+            <td>{cons.product_name}</td>
+            <td>{cons.id}</td>
+            <td style={{ fontSize: '0.92em' }}>{cons.q_title}</td>
+            <td style={{ fontSize: '0.75em' }}>{dateConverter(cons.q_date)}</td>
+            <td>
+              <Badge color="warning" pill>
+                답변대기
+              </Badge>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan={7}>
+              <Collapse isOpen={this.state.collapseOpen[index]}>
+                <Card>
+                  <CardBody>
+                    <div style={{ textAlign: 'left' }}>
+                      <h3>{cons.q_title}</h3>
+                      <span>
+                        {cons.pro_num} {cons.product_name}
+                      </span>
+                      <span className="mb-0 pt-1 pb-0">
+                        <p className="mb-0 pb-0"> 작성자: {cons.id}</p>
+                      </span>
+                      <span className="mb-0 pb-0">
+                        <p className="mb-0 pb-0">
+                          {' '}
+                          작성일: {dateConverter(cons.q_date)}
+                        </p>
+                      </span>
+                      <hr className="pt-0 mt-3"></hr>
+                      {cons.q_content}
+                    </div>
+                    <hr className="pt-0 mb-0"></hr>
+
+                    <Row>
+                      <Col xs={5} lg={12}>
+                        <FormGroup>
+                          <Label for="exampleText"></Label>
+                          <Input
+                            type="textarea"
+                            name="text"
+                            id="exampleText"
+                            style={{ minHeight: '250px' }}
+                            onChange={(e) => this.answerInputHandler(e, index)}
+                          />
+                        </FormGroup>
+                        <Button
+                          color="warning"
+                          onClick={() => this.answerBtnHandler(index)}
+                        >
+                          답변등록
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Collapse>
+            </td>
+          </tr>
+        </React.Fragment>
       ),
     );
+
+    return filteredData;
   };
 
   render() {
