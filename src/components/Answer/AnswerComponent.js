@@ -13,17 +13,17 @@ import {
   Label,
   Input,
 } from 'reactstrap';
-import React, { Component } from 'react';
-import ApiService from '../../apiService/ApiService';
+import React, { Component, Fragment } from 'react';
 import CustomTableAnswer from '../../layouts/CustomTableAnswer';
 //페이지네이션
 import Pagination from '../../layouts/Pagination';
 import { paginate } from '../../components/utils/Paginate';
-import { dateConverter } from '../../components/utils/DateConverter';
+import { dateConverter } from '../utils/DateConverter';
 //searchbox
 import SearchBoxBasic from '../../layouts/SearchBoxBasic';
+import Dropbox from '../../layouts/Dropbox';
 
-export default class ProductQnA extends Component {
+export default class AnswerComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -36,27 +36,8 @@ export default class ProductQnA extends Component {
       inputText: [],
       keyword: '',
       checked: false,
+      selectedOption: null,
     };
-
-    this.tableSubject = [
-      '질문번호',
-      '상품번호',
-      '상품이름',
-      '작성자',
-      '제목',
-      '질문작성일',
-      '답변상태',
-    ];
-
-    this.styled = [
-      '10.0%',
-      '10.0%',
-      '27.0%',
-      '13.0%',
-      '30.0%',
-      '40.0%',
-      '10.0%',
-    ];
 
     this.pageSize = 8;
     this.resultCnt = 0;
@@ -66,40 +47,32 @@ export default class ProductQnA extends Component {
     this.loadingData();
   }
 
-  //데이터 로딩(질문데이터)
   loadingData = () => {
-    ApiService.fetchProductQuestion()
-      .then((res) => {
-        this.setState(
-          {
-            data: res.data,
-          },
-          this.loadingData2(),
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  //데이터 로딩2(답변데이터)
-  loadingData2 = () => {
-    ApiService.fetchProductAnswer().then((res) => {
-      const aData = res.data;
-      this.state.data.forEach((data, index) => {
-        let qna = aData.find((ad) => ad.q_num === data.q_num);
-        if (qna) {
-          const answerData = [...this.state.answerData];
-          const answerText = [...this.state.answerText];
-          answerData[index] = qna;
-          answerText[index] = qna.a_content;
-          this.setState({
-            answerData: answerData,
-            answerText: answerText,
+    this.props.tableDataQ().then((data) =>
+      this.setState(
+        {
+          data: data,
+        },
+        () => {
+          this.props.tableDataA().then((data) => {
+            const aData = data;
+            this.state.data.forEach((data, index) => {
+              let qna = aData.find((ad) => ad.q_num === data.q_num);
+              if (qna) {
+                const answerData = [...this.state.answerData];
+                const answerText = [...this.state.answerText];
+                answerData[index] = qna;
+                answerText[index] = qna.a_content;
+                this.setState({
+                  answerData: answerData,
+                  answerText: answerText,
+                });
+              }
+            });
           });
-        }
-      });
-    });
+        },
+      ),
+    );
   };
 
   //page변경 핸들러
@@ -143,12 +116,13 @@ export default class ProductQnA extends Component {
     //-----------------------------------
 
     if (this.state.answerData[index]) {
-      ApiService.updateProductAnswer(
-        JSON.stringify({
-          key: this.state.answerData[index].a_num,
-          text: this.state.inputText[index],
-        }),
-      )
+      this.props
+        .updateA(
+          JSON.stringify({
+            key: this.state.answerData[index].a_num,
+            text: this.state.inputText[index],
+          }),
+        )
         .then((res) => {
           this.loadingData();
         })
@@ -156,12 +130,13 @@ export default class ProductQnA extends Component {
           alert(err);
         });
     } else {
-      ApiService.addProductAnswer(
-        JSON.stringify({
-          key: key,
-          text: this.state.inputText[index],
-        }),
-      )
+      this.props
+        .insertA(
+          JSON.stringify({
+            key: key,
+            text: this.state.inputText[index],
+          }),
+        )
         .then((res) => {
           this.loadingData();
         })
@@ -177,7 +152,8 @@ export default class ProductQnA extends Component {
     inputText[index] = '';
     const managedToggle = [...this.state.collapseOpen];
     managedToggle[index] = false;
-    ApiService.deleteProductAnswer(this.state.answerData[index].a_num)
+    this.props
+      .deleteA(this.state.answerData[index].a_num)
       .then(() => {
         this.setState(
           {
@@ -186,7 +162,7 @@ export default class ProductQnA extends Component {
             inputText: inputText,
             collapseOpen: managedToggle,
           },
-          this.loadingData2(),
+          this.loadingData(),
         );
       })
       .catch((err) => alert(err));
@@ -232,13 +208,20 @@ export default class ProductQnA extends Component {
     });
   };
 
+  //selectBox 핸들러
+  handleSelectBox = (selectedOption) => {
+    this.setState({ selectedOption });
+  };
+
+  //row 제목들
   subject = () =>
-    this.tableSubject.map((subj, index) => (
-      <th style={{ width: this.styled[index] }} scope="row" key={index}>
+    this.props.tableSubjects.map((subj, index) => (
+      <th style={{ width: this.props.tdStyle[index] }} scope="row" key={index}>
         {subj}
       </th>
     ));
 
+  //들어갈 내용들
   contents = () => {
     if (!this.state.data) return;
 
@@ -254,17 +237,18 @@ export default class ProductQnA extends Component {
       });
     }
 
-    //검색어가 있을 경우
     const ss = [];
+    //검색어가 있을 경우
     if (this.state.keyword !== '') {
       filteredData.forEach((data) => {
-        if (
-          data.product_name.indexOf(this.state.keyword) > -1 ||
-          data.pro_num.indexOf(this.state.keyword) > -1 ||
-          data.q_title.indexOf(this.state.keyword) > -1
-        )
-          ss.push(data.q_num);
+        if (data.q_title.indexOf(this.state.keyword) > -1) ss.push(data.q_num);
       });
+    }
+
+    const sopt = [];
+    //select option이 있을 경우
+    if (this.state.selectedOption) {
+      this.state.selectedOption.forEach((opt) => sopt.push(opt.value));
     }
 
     if (
@@ -273,7 +257,7 @@ export default class ProductQnA extends Component {
     ) {
       return (
         <tr>
-          <td colSpan={7} style={{ textAlign: 'center' }}>
+          <td colSpan={6} style={{ textAlign: 'center' }}>
             검색결과가 없습니다
           </td>
         </tr>
@@ -285,6 +269,7 @@ export default class ProductQnA extends Component {
       (cons, index) => (
         <React.Fragment key={cons.q_num}>
           {(ready.length > 0 && !ready.includes(cons.q_num)) ||
+          (sopt.length > 0 && !sopt.includes(cons.q_type)) ||
           (ss.length > 0 && !ss.includes(cons.q_num)) ? null : (
             <>
               <tr
@@ -296,14 +281,15 @@ export default class ProductQnA extends Component {
                 }}
                 onClick={() => this.toggle(index)}
               >
-                <td>{cons.q_num}</td>
-                <td>{cons.pro_num}</td>
-                <td>{cons.product_name}</td>
-                <td>{cons.id}</td>
-                <td style={{ fontSize: '0.92em' }}>{cons.q_title}</td>
-                <td style={{ fontSize: '0.75em' }}>
-                  {dateConverter(cons.q_date)}
-                </td>
+                {this.props.rowId.map((rr, idx) => (
+                  <Fragment key={idx}>
+                    <td>
+                      {idx === this.props.rowId.length - 1
+                        ? dateConverter(cons[rr])
+                        : cons[rr]}
+                    </td>
+                  </Fragment>
+                ))}
                 <td>
                   {this.state.answerData[index] ? (
                     <Badge color="primary" pill>
@@ -323,9 +309,6 @@ export default class ProductQnA extends Component {
                       <CardBody>
                         <div style={{ textAlign: 'left' }}>
                           <h3>{cons.q_title}</h3>
-                          <span>
-                            {cons.pro_num} {cons.product_name}
-                          </span>
                           <span className="mb-0 pt-1 pb-0">
                             <p className="mb-0 pb-0"> 작성자: {cons.id}</p>
                           </span>
@@ -336,6 +319,15 @@ export default class ProductQnA extends Component {
                             </p>
                           </span>
                           <hr className="pt-0 mt-3"></hr>
+                          {cons.q_file ? (
+                            <p>
+                              <img
+                                src={cons.q_file}
+                                style={{ width: '348px' }}
+                                alt="이미지"
+                              />
+                            </p>
+                          ) : null}
                           {cons.q_content}
                         </div>
                         <hr className="pt-0 mb-0"></hr>
@@ -432,16 +424,27 @@ export default class ProductQnA extends Component {
     return (
       <div className="bodyWrap">
         <Container className="themed-container" fluid={true}>
-          <Row md={12}>
-            <Col>
+          <Row>
+            <Col md={12}>
               <Card>
                 <CardHeader>
-                  <strong>상품문의글 목록</strong>
+                  <strong>{this.props.subject}</strong>
                   <SearchBoxBasic
                     searching={this.searching}
-                    ph={'상품번호 혹은 상품이름, 글제목을 입력'}
+                    ph={this.props.searchHolder}
                   />
                   <div className="custom-control custom-checkbox float-right mr-3 mt-3">
+                    <div
+                      className="mr-5"
+                      style={{ display: 'inline-block', minWidth: '150px' }}
+                    >
+                      <Dropbox
+                        text={'질문분류'}
+                        options={this.props.options}
+                        value={this.state.selectedOption}
+                        onChange={this.handleSelectBox}
+                      />
+                    </div>
                     <input
                       type="checkbox"
                       className="custom-control-input"

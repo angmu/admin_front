@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Header from 'components/Headers/Header.js';
+import UserHeader from 'components/Headers/UserHeader.js';
 import Board from '../../layouts/Board';
 import ApiService from '../../apiService/ApiService';
 import { dateConverter } from '../../components/utils/DateConverter';
@@ -85,7 +85,7 @@ export default function NoticeList() {
 
   return (
     <div>
-      <Header />
+      <UserHeader />
       <Board
         tableSubject={subject}
         contents={contents}

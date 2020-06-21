@@ -6,6 +6,7 @@ import Member from 'views/member/Member.js';
 //MEMBER
 import MemberList from 'views/member/MemberList.js';
 
+//////////////////////////////////////////////////////////////////
 //PRODUCT
 import ProductWrap from 'views/product/ProductWrap';
 //RELATED PRODUCT
@@ -14,14 +15,20 @@ import RelatedProduct from 'views/product/RelatedProduct';
 import MainProduct from 'views/product/MainProduct';
 //PRODUCT QUESTION
 import ProductQnA from 'views/product/ProductQnA';
+//CATEGORY
+import Category from 'views/category/Category';
 
+//////////////////////////////////////////////////////////////////
 //EVENT
 import EventList from 'views/board/EventList';
 //NOTICE
 import NoticeWrap from 'views/board/NoticeWrap';
-
-//CATEGORY
-import Category from 'views/category/Category';
+//QNA
+import OneOneQnA from 'views/board/OneOneQnA';
+//REVIEW ANSWER
+import ReviewA from 'views/board/ReviewA';
+//FAQ
+import FAQ from 'views/board/FAQ';
 
 var routes = [
   {
@@ -167,24 +174,24 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/board/qna',
         name: '1:1문의 답변',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: OneOneQnA,
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/board/reviewA',
         name: '리뷰 답변',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: ReviewA,
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/board/FAQ',
         name: 'FAQ',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: FAQ,
         submenu: null,
       },
     ],

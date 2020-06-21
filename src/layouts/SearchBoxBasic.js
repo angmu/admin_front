@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Col } from 'reactstrap';
 
-export default function SearchBoxBasic({ searching }) {
+export default function SearchBoxBasic({ searching, ph }) {
   const [opts, setOpts] = useState({
     keyword: '',
   });
@@ -27,7 +27,7 @@ export default function SearchBoxBasic({ searching }) {
             name="keyword"
             className="form-control form-control-sm "
             id="exampleFormControlInput1"
-            placeholder="검색어 입력.."
+            placeholder={ph ? ph : '검색어 입력..'}
             value={opts.keyword}
             onChange={handleChange}
             onKeyPress={(event) => {

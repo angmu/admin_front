@@ -13,17 +13,17 @@ import {
   Label,
   Input,
 } from 'reactstrap';
-import React, { Component } from 'react';
-import ApiService from '../../apiService/ApiService';
+import React, { Component, Fragment } from 'react';
 import CustomTableAnswer from '../../layouts/CustomTableAnswer';
 //페이지네이션
 import Pagination from '../../layouts/Pagination';
-import { paginate } from '../../components/utils/Paginate';
-import { dateConverter } from '../../components/utils/DateConverter';
+import { paginate } from '../utils/Paginate';
+import { dateConverter } from '../utils/DateConverter';
 //searchbox
 import SearchBoxBasic from '../../layouts/SearchBoxBasic';
+import StarRatings from 'react-star-ratings';
 
-export default class ProductQnA extends Component {
+export default class ReviewComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -31,32 +31,12 @@ export default class ProductQnA extends Component {
       data: null,
       currentPage: 1,
       collapseOpen: [],
-      answerData: [],
       answerText: [],
       inputText: [],
       keyword: '',
       checked: false,
+      productData: [],
     };
-
-    this.tableSubject = [
-      '질문번호',
-      '상품번호',
-      '상품이름',
-      '작성자',
-      '제목',
-      '질문작성일',
-      '답변상태',
-    ];
-
-    this.styled = [
-      '10.0%',
-      '10.0%',
-      '27.0%',
-      '13.0%',
-      '30.0%',
-      '40.0%',
-      '10.0%',
-    ];
 
     this.pageSize = 8;
     this.resultCnt = 0;
@@ -66,40 +46,25 @@ export default class ProductQnA extends Component {
     this.loadingData();
   }
 
-  //데이터 로딩(질문데이터)
   loadingData = () => {
-    ApiService.fetchProductQuestion()
-      .then((res) => {
-        this.setState(
-          {
-            data: res.data,
-          },
-          this.loadingData2(),
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  //데이터 로딩2(답변데이터)
-  loadingData2 = () => {
-    ApiService.fetchProductAnswer().then((res) => {
-      const aData = res.data;
-      this.state.data.forEach((data, index) => {
-        let qna = aData.find((ad) => ad.q_num === data.q_num);
-        if (qna) {
-          const answerData = [...this.state.answerData];
+    this.props.tableDataR().then((data) =>
+      this.setState(
+        {
+          data: data,
+        },
+        () => {
           const answerText = [...this.state.answerText];
-          answerData[index] = qna;
-          answerText[index] = qna.a_content;
-          this.setState({
-            answerData: answerData,
-            answerText: answerText,
+          this.state.data.forEach((data, index) => {
+            if (data.admin_answer) {
+              answerText[index] = data.admin_answer;
+            }
+            this.setState({
+              answerText: answerText,
+            });
           });
-        }
-      });
-    });
+        },
+      ),
+    );
   };
 
   //page변경 핸들러
@@ -130,6 +95,17 @@ export default class ProductQnA extends Component {
     const managedToggle = [...this.state.collapseOpen];
     managedToggle[index] = !managedToggle[index];
 
+    //리뷰상품가져오기
+    if (!this.state.productData[index]) {
+      this.props.fetchRP(this.state.data[index].review_num).then((data) => {
+        const pd = [...this.state.productData];
+        pd[index] = data;
+        this.setState({
+          productData: pd,
+        });
+      });
+    }
+
     this.setState({
       collapseOpen: managedToggle,
     });
@@ -138,55 +114,42 @@ export default class ProductQnA extends Component {
   //answer OK
   answerBtnHandler = (key, index) => {
     //-----------------------------------
-    //if answerData가 없으면 insert
+    //if answerText가 없으면 insert
     //있으면 update
     //-----------------------------------
 
-    if (this.state.answerData[index]) {
-      ApiService.updateProductAnswer(
-        JSON.stringify({
-          key: this.state.answerData[index].a_num,
-          text: this.state.inputText[index],
-        }),
-      )
-        .then((res) => {
-          this.loadingData();
-        })
-        .catch((err) => {
-          alert(err);
-        });
+    if (this.state.answerText[index]) {
+      console.log('update');
     } else {
-      ApiService.addProductAnswer(
-        JSON.stringify({
-          key: key,
-          text: this.state.inputText[index],
-        }),
-      )
-        .then((res) => {
+      this.props
+        .patchA(
+          JSON.stringify({
+            key: key,
+            text: this.state.inputText[index],
+          }),
+        )
+        .then(() => {
           this.loadingData();
-        })
-        .catch((err) => {
-          alert(err);
         });
     }
   };
 
   //answerDelete
-  answerDelete = (index) => {
+  answerDelete = (key, index) => {
     const inputText = [...this.state.inputText];
     inputText[index] = '';
     const managedToggle = [...this.state.collapseOpen];
     managedToggle[index] = false;
-    ApiService.deleteProductAnswer(this.state.answerData[index].a_num)
+    this.props
+      .removeA(key)
       .then(() => {
         this.setState(
           {
-            answerData: [],
             answerText: [],
             inputText: inputText,
             collapseOpen: managedToggle,
           },
-          this.loadingData2(),
+          this.loadingData(),
         );
       })
       .catch((err) => alert(err));
@@ -194,8 +157,7 @@ export default class ProductQnA extends Component {
 
   //수정버튼
   putBtnHandler = (index) => {
-    const editText = this.state.answerData[index].a_content;
-
+    const editText = this.state.answerText[index];
     const answerText = [...this.state.answerText];
 
     //set answerText null
@@ -222,23 +184,30 @@ export default class ProductQnA extends Component {
   };
 
   //이전으로 버튼
-  answerBack = (key, index) => {
+  answerBack = (index) => {
     const answerText = [...this.state.answerText];
 
     //set answerText 다시 셋팅
-    answerText[index] = this.state.answerData[index].a_content;
+    answerText[index] = this.state.data[index].admin_answer;
     this.setState({
       answerText: answerText,
     });
   };
 
+  //selectBox 핸들러
+  handleSelectBox = (selectedOption) => {
+    this.setState({ selectedOption });
+  };
+
+  //row 제목들
   subject = () =>
-    this.tableSubject.map((subj, index) => (
-      <th style={{ width: this.styled[index] }} scope="row" key={index}>
+    this.props.tableSubjects.map((subj, index) => (
+      <th style={{ width: this.props.tdStyle[index] }} scope="row" key={index}>
         {subj}
       </th>
     ));
 
+  //들어갈 내용들
   contents = () => {
     if (!this.state.data) return;
 
@@ -248,32 +217,32 @@ export default class ProductQnA extends Component {
     //답변대기만 보고싶을 경우
     if (this.state.checked) {
       filteredData.forEach((data, index) => {
-        if (!this.state.answerData[index]) {
-          ready.push(data.q_num);
+        if (!this.state.answerText[index]) {
+          ready.push(data.review_num);
         }
       });
     }
 
-    //검색어가 있을 경우
     const ss = [];
+    //검색어가 있을 경우
     if (this.state.keyword !== '') {
       filteredData.forEach((data) => {
         if (
-          data.product_name.indexOf(this.state.keyword) > -1 ||
-          data.pro_num.indexOf(this.state.keyword) > -1 ||
-          data.q_title.indexOf(this.state.keyword) > -1
-        )
-          ss.push(data.q_num);
+          data.title.indexOf(this.state.keyword) > -1 ||
+          data.key.indexOf(this.state.keyword) > -1
+        ) {
+          ss.push(data.review_num);
+        }
       });
     }
 
     if (
-      (this.state.keyword !== '' && ss.length === 0) ||
-      (this.state.checked && ready.length === 0)
+      (this.state.checked && ready.length === 0) ||
+      (this.state.keyword !== '' && ss.length === 0)
     ) {
       return (
         <tr>
-          <td colSpan={7} style={{ textAlign: 'center' }}>
+          <td colSpan={6} style={{ textAlign: 'center' }}>
             검색결과가 없습니다
           </td>
         </tr>
@@ -283,9 +252,9 @@ export default class ProductQnA extends Component {
 
     filteredData = paginate(filteredData, this.currentPage, this.pageSize).map(
       (cons, index) => (
-        <React.Fragment key={cons.q_num}>
-          {(ready.length > 0 && !ready.includes(cons.q_num)) ||
-          (ss.length > 0 && !ss.includes(cons.q_num)) ? null : (
+        <React.Fragment key={cons.review_num}>
+          {(ready.length > 0 && !ready.includes(cons.review_num)) ||
+          (ss.length > 0 && !ss.includes(cons.review_num)) ? null : (
             <>
               <tr
                 style={{
@@ -296,16 +265,17 @@ export default class ProductQnA extends Component {
                 }}
                 onClick={() => this.toggle(index)}
               >
-                <td>{cons.q_num}</td>
-                <td>{cons.pro_num}</td>
-                <td>{cons.product_name}</td>
-                <td>{cons.id}</td>
-                <td style={{ fontSize: '0.92em' }}>{cons.q_title}</td>
-                <td style={{ fontSize: '0.75em' }}>
-                  {dateConverter(cons.q_date)}
-                </td>
+                {this.props.rowId.map((rr, idx) => (
+                  <Fragment key={idx}>
+                    <td>
+                      {idx === this.props.rowId.length - 1
+                        ? dateConverter(cons[rr])
+                        : cons[rr]}
+                    </td>
+                  </Fragment>
+                ))}
                 <td>
-                  {this.state.answerData[index] ? (
+                  {cons.admin_answer ? (
                     <Badge color="primary" pill>
                       답변완료
                     </Badge>
@@ -322,21 +292,43 @@ export default class ProductQnA extends Component {
                     <Card>
                       <CardBody>
                         <div style={{ textAlign: 'left' }}>
-                          <h3>{cons.q_title}</h3>
-                          <span>
-                            {cons.pro_num} {cons.product_name}
-                          </span>
+                          <h3>{cons.title}</h3>
                           <span className="mb-0 pt-1 pb-0">
                             <p className="mb-0 pb-0"> 작성자: {cons.id}</p>
                           </span>
                           <span className="mb-0 pb-0">
                             <p className="mb-0 pb-0">
                               {' '}
-                              작성일: {dateConverter(cons.q_date)}
+                              작성일: {dateConverter(cons.regist_review)}
                             </p>
                           </span>
+                          <span className="mb-0 pb-0">
+                            {this.state.productData[index] ? (
+                              <div>
+                                {this.state.productData[index].PRODUCT_NAME} |{' '}
+                                {this.state.productData[index].o_quant}개 구매
+                              </div>
+                            ) : null}
+                          </span>
+                          <span className="mb-0 pb-0">
+                            <StarRatings
+                              rating={parseInt(cons.score)}
+                              starRatedColor="orange"
+                              starDimension="15px"
+                              starSpacing="1px"
+                            />
+                          </span>
                           <hr className="pt-0 mt-3"></hr>
-                          {cons.q_content}
+                          {cons.image ? (
+                            <p>
+                              <img
+                                src={cons.image}
+                                style={{ width: '348px' }}
+                                alt="이미지"
+                              />
+                            </p>
+                          ) : null}
+                          {cons.content}
                         </div>
                         <hr className="pt-0 mb-0"></hr>
 
@@ -353,14 +345,7 @@ export default class ProductQnA extends Component {
                               >
                                 {`${this.state.answerText[index]}`}
                               </pre>
-                              <span
-                                className="mr-2"
-                                style={{ fontSize: '0.8em' }}
-                              >
-                                {dateConverter(
-                                  this.state.answerData[index].a_date,
-                                )}
-                              </span>
+
                               <Button
                                 size="sm"
                                 color="warning"
@@ -389,23 +374,23 @@ export default class ProductQnA extends Component {
                               <Button
                                 color="warning"
                                 onClick={() =>
-                                  this.answerBtnHandler(cons.q_num, index)
+                                  this.answerBtnHandler(cons.review_num, index)
                                 }
                               >
                                 답변등록
                               </Button>
-                              {this.state.answerData[index] ? (
+                              {cons.admin_answer ? (
                                 <React.Fragment>
                                   <Button
                                     color="danger"
-                                    onClick={() => this.answerDelete(index)}
+                                    onClick={() =>
+                                      this.answerDelete(cons.review_num, index)
+                                    }
                                   >
                                     답변삭제{' '}
                                   </Button>
                                   <Button
-                                    onClick={() =>
-                                      this.answerBack(cons.q_num, index)
-                                    }
+                                    onClick={() => this.answerBack(index)}
                                   >
                                     이전으로
                                   </Button>
@@ -432,16 +417,20 @@ export default class ProductQnA extends Component {
     return (
       <div className="bodyWrap">
         <Container className="themed-container" fluid={true}>
-          <Row md={12}>
-            <Col>
+          <Row>
+            <Col md={12}>
               <Card>
                 <CardHeader>
-                  <strong>상품문의글 목록</strong>
+                  <strong>{this.props.subject}</strong>
                   <SearchBoxBasic
                     searching={this.searching}
-                    ph={'상품번호 혹은 상품이름, 글제목을 입력'}
+                    ph={this.props.searchHolder}
                   />
                   <div className="custom-control custom-checkbox float-right mr-3 mt-3">
+                    <div
+                      className="mr-5"
+                      style={{ display: 'inline-block', minWidth: '150px' }}
+                    ></div>
                     <input
                       type="checkbox"
                       className="custom-control-input"

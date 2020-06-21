@@ -1,6 +1,6 @@
 import { Card, CardHeader, Container, Row, Col, CardBody } from 'reactstrap';
 import React, { useState } from 'react';
-import Header from 'components/Headers/Header.js';
+import UserHeader from 'components/Headers/UserHeader.js';
 import EventListComponent from '../../components/Event/EventListComponent';
 import WriteModal from '../../components/Event/WriteModalComponent';
 import { RefreshProvider } from '../../components/contexts/EventContext';
@@ -10,7 +10,7 @@ export default function EventList() {
 
   return (
     <RefreshProvider>
-      <Header />
+      <UserHeader />
       <Container className="mt--7" fluid>
         <Row>
           <Col>
