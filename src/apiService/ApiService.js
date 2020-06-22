@@ -203,6 +203,21 @@ class ApiService {
   fetchFaq() {
     return axios.get(FRONT_SERVICE_URL + 'admin/faqlist');
   }
+
+  //order 내역 가져오기
+  fetchOrder(){
+    return axios.get(FRONT_SERVICE_URL + 'admin/olist');
+  }
+
+  //orderList 내역 가져오기
+  fetchOrderList(){
+    return axios.get(FRONT_SERVICE_URL + `admin/ollist`);
+  }
+
+  //orderProductList 목록 불러오기
+  fetchOrderPList(){
+    return axios.get(FRONT_SERVICE_URL + 'admin/olplist');
+  }
 }
 
 export default new ApiService();

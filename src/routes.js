@@ -30,6 +30,12 @@ import ReviewA from 'views/board/ReviewA';
 //FAQ
 import FAQ from 'views/board/FAQ';
 
+
+/////////////////////////////////////////////////////////////////////
+//ORDER
+import OrderList from 'views/order/OrderList';
+
+
 var routes = [
   {
     path: '/index',
@@ -118,30 +124,16 @@ var routes = [
     ],
   },
   {
-    path: '/index',
+    path: '/order',
     name: '주문관리',
     icon: ['ni ni-credit-card text-danger', 'ni ni-bold-down'],
     component: Index,
     submenu: [
       {
-        path: '/member',
-        name: '주문내역',
+        path: '/order/list',
+        name: '전체주문목록',
         icon: ['ni ni-fat-delete'],
-        component: Member,
-        submenu: null,
-      },
-      {
-        path: '/member',
-        name: '결제관리',
-        icon: ['ni ni-fat-delete'],
-        component: Member,
-        submenu: null,
-      },
-      {
-        path: '/member',
-        name: '미완료주문',
-        icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: OrderList,
         submenu: null,
       },
       {
