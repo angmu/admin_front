@@ -5,7 +5,6 @@ import Pagination from '../../layouts/Pagination';
 import { paginate } from '../utils/Paginate';
 
 export default class OrderComponent extends React.Component {
-
   state = {
     currentPage: 1,
     pageSize: 10,
@@ -20,62 +19,152 @@ export default class OrderComponent extends React.Component {
     });
   };
 
-
   //컨텐츠 내용
   getContent = () => {
-    const fData = [...this.props.orderData];
+    let fData = [...this.props.orderData];
     const { currentPage, pageSize } = this.state;
 
-    this.resultCnt = fData.length;
+    //컨텐츠 필터링(검색)
+    const { sCondition } = this.props;
 
-    return paginate(fData, currentPage, pageSize).map(data =>
+    if (sCondition) {
+      //1. 키워드가 있으면
+      if (sCondition.keyword) {
+        //1 -> 주문번호 2->주문자아이디 3->주문자명 4->주문내역번호
+        switch (sCondition.keywordSelect) {
+          case '1':
+            fData = fData.filter(
+              (d) => d.o_num.indexOf(sCondition.keyword) > -1,
+            );
+            break;
+          case '2':
+            fData = fData
+              .map((d) =>
+                !d.id
+                  ? Object.assign(
+                      {},
+                      {
+                        ...d,
+                        id: '비회원',
+                      },
+                    )
+                  : d,
+              )
+              .filter((d) => d.id.indexOf(sCondition.keyword) > -1);
+            break;
+          case '3':
+            fData = fData.filter(
+              (d) => d.o_name.indexOf(sCondition.keyword) > -1,
+            );
+            break;
+          case '4':
+            break;
+          default:
+            break;
+        }
+      }
+
+      //2.기간이 있으면
+      if (sCondition.startDate && sCondition.endDate) {
+      }
+
+      //3.상품키워드가 있으면
+      if (sCondition.product) {
+        if (sCondition.productSelect === '0') {
+        } else {
+        }
+      }
+
+      const checkboxs = [];
+      //4.주문상태 checkBoxs Map에서 false인게 있으면 filter
+      if (sCondition.checkedBoxs) {
+        sCondition.checkedBoxs.forEach((value, key) => {
+          console.log(key, value);
+          if (!value) checkboxs.push(key);
+        });
+      }
+      console.log(checkboxs);
+
+      //5.회원구분 all / member /nonmember
+      if (sCondition.mRadio === 'member') {
+        fData = fData.filter((d) => d.id);
+      } else if (sCondition.mRadio === 'nonMember') {
+        fData = fData.filter((d) => !d.id);
+      }
+    }
+
+    if (fData) this.resultCnt = fData.length;
+
+    return paginate(fData, currentPage, pageSize).map((data) => (
       <tr key={data.o_num}>
-        <td><p style={{ textDecoration: 'underline', cursor: 'pointer' }}
-               onClick={() => {
-                 this.props.modalToggle();
-                 this.props.selectNum(this.props.orderData.find(o => o.o_num === data.o_num));
-               }}>{data.o_num}</p></td>
+        <td>
+          <p
+            style={{ textDecoration: 'underline', cursor: 'pointer' }}
+            onClick={() => {
+              this.props.modalToggle();
+              this.props.selectNum(
+                this.props.orderData.find((o) => o.o_num === data.o_num),
+              );
+            }}
+          >
+            {data.o_num}
+          </p>
+        </td>
         <td>{data.id ? data.id : '비회원'}</td>
         <td>{data.o_name}</td>
         <td>{data.o_tel}</td>
         <td>{`${data.o_cost.toLocaleString()}원`}</td>
-        <td><h2><Badge style={{ background: this.props.badgeColor(data.o_status), color:'black'}}>{data.o_status}</Badge></h2></td>
+        <td>
+          <h2>
+            <Badge
+              style={{
+                background: this.props.badgeColor(data.o_status),
+                color: 'black',
+              }}
+            >
+              {data.o_status}
+            </Badge>
+          </h2>
+        </td>
         <td>{`${data.o_point}p`}</td>
         <td>{dateConverter(data.o_date)}</td>
-        <td>{data.o_update_date !== data.o_date ? dateConverter(data.o_update_date) : null}</td>
-      </tr>,
-    );
+        <td>
+          {data.o_update_date !== data.o_date
+            ? dateConverter(data.o_update_date)
+            : null}
+        </td>
+      </tr>
+    ));
   };
 
-
   render() {
-    return <div className="table-responsive">
-      <table className="table table-bordered table-hover">
-        <thead className="thead-light">
-        <tr>
-          <th>주문번호</th>
-          <th>주문자아이디</th>
-          <th>주문자명</th>
-          <th>전화번호</th>
-          <th>주문금액</th>
-          <th>주문상태</th>
-          <th>사용포인트</th>
-          <th>주문일</th>
-          <th>확정일</th>
-        </tr>
-        </thead>
-        <tbody>
-        {this.getContent()}
-        </tbody>
-      </table>
-      <div className="mt-2">
-        <Pagination
-          itemsCount={this.resultCnt}
-          pageSize={this.state.pageSize}
-          currentPage={this.state.currentPage}
-          onPageChange={this.handleChangePage}
-        />
+    return (
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover">
+          <thead className="thead-light">
+            <tr>
+              <th>주문번호</th>
+              <th>주문자아이디</th>
+              <th>주문자명</th>
+              <th>전화번호</th>
+              <th>주문금액</th>
+              <th>주문상태</th>
+              <th>사용포인트</th>
+              <th>주문일</th>
+              <th>확정일</th>
+            </tr>
+          </thead>
+          <tbody>{this.getContent()}</tbody>
+        </table>
+        <div className="mt-2">
+          <Pagination
+            itemsCount={this.resultCnt}
+            pageSize={this.state.pageSize}
+            currentPage={this.state.currentPage}
+            onPageChange={this.handleChangePage}
+          />
+        </div>
       </div>
-    </div>;
+    );
   }
 }

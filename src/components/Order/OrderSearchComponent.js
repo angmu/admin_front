@@ -27,6 +27,13 @@ export default class OrderSearchComponent extends Component {
     };
   }
 
+  componentDidMount() {
+    this.state.checkedBoxs.set('checkboxAll', true);
+    for (let i = 0; i < 7; i++) {
+      this.state.checkedBoxs.set(`checkbox${i + 2}`, true);
+    }
+  }
+
   //토글모달
   handleToggle = () => {
     this.setState({
@@ -88,8 +95,14 @@ export default class OrderSearchComponent extends Component {
 
   //option reset
   reset = () => {
+    const blankMap = new Map();
+    blankMap.set('checkboxAll', true);
+    for (let i = 0; i < 7; i++) {
+      blankMap.set(`checkbox${i + 2}`, true);
+    }
+
     this.setState({
-      checkedBoxs: new Map(),
+      checkedBoxs: blankMap,
       startDate: '',
       endDate: '',
       keywordSelect: '0',
@@ -115,7 +128,7 @@ export default class OrderSearchComponent extends Component {
 
   render() {
     return (
-      <Form>
+      <Form onSubmit={(e) => this.props.handleSubmit(e, this.state)}>
         <FormGroup row>
           <Label htmlFor="keyword" sm={2}>
             검색어
@@ -328,7 +341,9 @@ export default class OrderSearchComponent extends Component {
         </FormGroup>
         <FormGroup check row>
           <Col sm={{ size: 7, offset: 5 }}>
-            <Button color="primary">검색</Button>
+            <Button color="primary" type="submit">
+              검색
+            </Button>
             <Button outline color="primary" onClick={this.reset}>
               초기화
             </Button>
