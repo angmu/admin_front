@@ -6,9 +6,11 @@ class ApiService {
   fetchUsers() {
     return axios.get(FRONT_SERVICE_URL + 'admin/mlist');
   }
+
   fetchEvents(start, end) {
     return axios.get(FRONT_SERVICE_URL + `admin/elist/${start}/${end}`);
   }
+
   fetchCoupons() {
     return axios.get(FRONT_SERVICE_URL + `admin/couplist`);
   }
@@ -28,6 +30,7 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   //상품리스트
   fetchProductList() {
     return axios.get(FRONT_SERVICE_URL + 'admin/plist');
@@ -136,12 +139,14 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   //상품 답변 업데이트
   updateProductAnswer(data) {
     return axios.put(FRONT_SERVICE_URL + 'admin/pqalist', data, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   //상품 답변 삭제
   deleteProductAnswer(code) {
     return axios.delete(FRONT_SERVICE_URL + `admin/pqalist/${code}`);
@@ -175,6 +180,7 @@ class ApiService {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   //1:1문의 질문분류 가져오기
   fetchQType() {
     return axios.get(FRONT_SERVICE_URL + 'admin/aqlist');
@@ -184,16 +190,19 @@ class ApiService {
   fetchReivew() {
     return axios.get(FRONT_SERVICE_URL + 'admin/rlist');
   }
+
   //review 답변 작성
   addReviewAnswer(data) {
     return axios.patch(FRONT_SERVICE_URL + 'admin/rlist', data, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
   //review 답변 삭제
   removeReviewAnswer(key) {
     return axios.patch(FRONT_SERVICE_URL + `admin/rlist/${key}`);
   }
+
   //review 에 대한 상품정보
   fetchReviewProduct(key) {
     return axios.get(FRONT_SERVICE_URL + `admin/rlistp/${key}`);
@@ -205,18 +214,33 @@ class ApiService {
   }
 
   //order 내역 가져오기
-  fetchOrder(){
+  fetchOrder() {
     return axios.get(FRONT_SERVICE_URL + 'admin/olist');
   }
 
   //orderList 내역 가져오기
-  fetchOrderList(){
+  fetchOrderList() {
     return axios.get(FRONT_SERVICE_URL + `admin/ollist`);
   }
 
   //orderProductList 목록 불러오기
-  fetchOrderPList(){
+  fetchOrderPList() {
     return axios.get(FRONT_SERVICE_URL + 'admin/olplist');
+  }
+
+  //orderStatus 변경하기
+  updateOStatus(code, value) {
+    return axios.patch(FRONT_SERVICE_URL + `admin/olist/${code}/${value}`);
+  }
+
+  //order에 대한 payment 정보 가져오기
+  fetchPaymentInfo(key) {
+    return axios.get(FRONT_SERVICE_URL + `admin/paylist/${key}`);
+  }
+
+  //order에 대한 payee 정보 가져오기
+  fetchPayeeInfo(key) {
+    return axios.get(FRONT_SERVICE_URL + `admin/payeelist/${key}`);
   }
 }
 

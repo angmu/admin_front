@@ -1,6 +1,6 @@
 import {
-  Card, CardText, CardBody,
-  CardTitle, Button, CardFooter, CardHeader, Container, Col,
+  Card, CardBody,
+  ButtonGroup, Button, CardFooter, CardHeader, Container, Col,
   TabContent, TabPane, Nav, NavItem, NavLink, Row, Modal, ModalHeader, ModalBody, ModalFooter,
 } from 'reactstrap';
 import React, { Fragment, useState, useEffect } from 'react';
@@ -9,9 +9,10 @@ import classnames from 'classnames';
 import ApiService from '../../apiService/ApiService';
 import { dateConverter } from '../../components/utils/DateConverter';
 import OrderListComponent from '../../components/Order/OrderListComponent';
-//페이지네이션
-import Pagination from '../../layouts/Pagination';
-import { paginate } from '../../components/utils/Paginate';
+import OrderComponent from '../../components/Order/OrderComponent';
+import PaymentComponent from '../../components/Order/PaymentComponent';
+import PayeeComponent from '../../components/Order/PayeeComponent';
+
 
 const modalStyle = {
   position: 'relative',
@@ -24,14 +25,6 @@ const modalStyle = {
 
 export default function OrderList() {
 
-  //현재 페이지
-  const [curPage, setCurPage] = useState(1);
-  //한 페이지에 몇개 보여줄 건지..
-  const pageSize = 8;
-  // 검색결과 카운트
-  let resultCnt = 0;
-
-
 
   //주문데이터
   const [orderData, setOrderData] = useState([]);
@@ -39,6 +32,10 @@ export default function OrderList() {
   const [orderListData, setOrderListData] = useState(
     [],
   );
+
+  //주문상태변경
+  const orderState = ['결제완료', '배송중', '배송완료', '취소대기', '취소승인'];
+  const orderBtn = ['#99D4F1', '#58B570', '#C3FB8E', '#B39F9C', '#B39F9C'];
 
   //초기 데이타(주문데이터, 주문내역데이터 불러오기)
   useEffect(() => {
@@ -72,9 +69,21 @@ export default function OrderList() {
   //modal Toggle
   const modalToggle = () => setModal(!modal);
 
+  //주문상태변경 nestedModal
+  const [nestedModal, setNestedModal] = useState(false);
+
+
   //선택한 데이터(모달 호출)
   const [selectedNum, setNum] = useState({});
   const selectNum = (obj) => setNum(obj);
+
+  const toggleNested = () => {
+    setNestedModal(!nestedModal);
+  };
+
+  //선택한 데이터의 주문상태와 바꿀 주문상태
+  const [selOrderState, setOrderState] = useState('');
+
 
   //테이블 탭
   const [activeTab, setActiveTab] = useState('1');
@@ -82,7 +91,7 @@ export default function OrderList() {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
-  //join both data
+  //join both data (특정주문에 대한 주문번호)
   const joinData = () => {
 
     const fData = orderListData.map((obj) =>
@@ -97,6 +106,46 @@ export default function OrderList() {
     }
     return fData;
 
+  };
+
+  //button click
+  const btnClick = (index) => {
+    setOrderState(orderState[index]);
+    toggleNested();
+  };
+
+  //order상태 변경
+  const updateOrderState = () => {
+    ApiService.updateOStatus(selectedNum.o_num, selOrderState).then((res) => {
+      ApiService.fetchOrder()
+        .then(res => {
+          setOrderData(res.data);
+          selectNum(res.data.find(o => o.o_num === selectedNum.o_num));
+        })
+        .catch(
+          err => console.log(err),
+        );
+      orderListLoading();
+    })
+      .catch((err) => console.log(err));
+  };
+
+  //뱃지색깔
+  const badgeColor = (status) => {
+    switch (status) {
+      case '결제대기중':
+        return 'rgba(129,224,224,0.88)';
+      case '결제완료':
+        return orderBtn[0];
+      case '배송중':
+        return orderBtn[1];
+      case '배송완료':
+        return orderBtn[2];
+      case '구매확정':
+        return '#cbffcd';
+      default:
+        return orderBtn[3];
+    }
   };
 
 
@@ -138,45 +187,12 @@ export default function OrderList() {
               <TabPane tabId="1">
                 <Row>
                   <Col sm="12">
-                    <div className="table-responsive">
-                      <table className="table table-bordered table-hover">
-                        <thead className="thead-light">
-                        <tr>
-                          <th>주문번호</th>
-                          <th>주문자아이디</th>
-                          <th>주문자명</th>
-                          <th>전화번호</th>
-                          <th>주문금액</th>
-                          <th>주문상태</th>
-                          <th>적립포인트</th>
-                          <th>주문일</th>
-                          <th>결제일</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {orderData.map(data => {
-                            return (
-                              <tr key={data.o_num}>
-                                <td><p style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                                       onClick={() => {
-                                         modalToggle();
-                                         selectNum(orderData.find(o => o.o_num === data.o_num));
-                                       }}>{data.o_num}</p></td>
-                                <td>{data.id ? data.id : '비회원'}</td>
-                                <td>{data.o_name}</td>
-                                <td>{data.o_tel}</td>
-                                <td>{`${data.o_cost.toLocaleString()}원`}</td>
-                                <td>{data.o_status}</td>
-                                <td>{`${data.o_point}p`}</td>
-                                <td>{dateConverter(data.o_date)}</td>
-                                <td>{data.o_update_date !== data.o_date? dateConverter(data.o_date):null}</td>
-                              </tr>
-                            );
-                          },
-                        )}
-                        </tbody>
-                      </table>
-                    </div>
+                    <OrderComponent
+                      orderData={orderData}
+                      modalToggle={modalToggle}
+                      selectNum={selectNum}
+                      badgeColor={badgeColor}
+                    />
                   </Col>
                 </Row>
               </TabPane>
@@ -185,7 +201,7 @@ export default function OrderList() {
               <TabPane tabId="2">
                 <Row>
                   <Col sm={12}>
-                    <OrderListComponent orderListData={orderListData}/>
+                    <OrderListComponent orderListData={orderListData} badgeColor={badgeColor}/>
                   </Col>
                 </Row>
               </TabPane>
@@ -201,9 +217,44 @@ export default function OrderList() {
           <ModalBody>
             <p className="pb-0 mb-0 mt-0">주문번호: {selectedNum.o_num}</p>
             <p className="pt-0 mt-0">주문일자: {dateConverter(selectedNum.o_date)} </p>
-            <OrderListComponent orderListData={joinData()}/>
-          </ModalBody>
+            <div>
+              <p style={{ display: 'inline-block' }} className="mr-2">주문상태변경</p>
+              <ButtonGroup size="sm">
+                {orderState.map((os, index) => <Button
+                  style={{ backgroundColor: orderBtn[index] }}
+                  onClick={() => btnClick(index)}
+                  disabled={selectedNum.o_status === orderState[index]}
+                  key={index}
+                >{os}
+                </Button>)}
+              </ButtonGroup>
 
+            </div>
+            <OrderListComponent orderListData={joinData()} badgeColor={badgeColor}/>
+            {/*주문 상태 변경 모달*/}
+            <Modal isOpen={nestedModal} fade={false} toggle={toggleNested}>
+              <ModalHeader>주문상태변경</ModalHeader>
+              <ModalBody><strong>{selectedNum.o_status}</strong>{' '}
+                <i className="fas fa-arrow-right"></i>{' '}
+                <strong>{selOrderState}</strong>
+                (으)로 변경합니다.</ModalBody>
+              <ModalFooter className="mt-0 pt-0">
+                <Button color="warning" onClick={() => {
+                  toggleNested();
+                  updateOrderState();
+                }}>OK</Button>{' '}
+              </ModalFooter>
+            </Modal>
+            <div>
+              <p>결제정보</p>
+              <PaymentComponent selectedNum={selectedNum} />
+            </div>
+
+            <div className="pt-3">
+              <p>수취자정보</p>
+              <PayeeComponent selectedNum={selectedNum}/>
+            </div>
+          </ModalBody>
         </Modal>
       </Card>
     </Container>
