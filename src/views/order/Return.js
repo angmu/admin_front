@@ -39,49 +39,42 @@ export default function Return() {
   const [orderListData, setOrderListData] = useState([]);
   //반품데이터
   const [changeData, setChangeData] = useState([]);
+  //조인데이터
+  const [jData, setJData] = useState([]);
 
   //주문상태변경
-  const orderState = [['반품', '교환'], ['신청', '대기', '승인']];
-  const orderBtn = [['#99D4F1', '#58B570'], ['#C3FB8E', '#B39F9C', '#B39F9C']];
-
-  //가공된 change데이터
-  const [afterChange, setAfterChange] = useState([]);
-  //가공된 orderList 데이터
-  const [afterOl, setAfterOl] = useState([]);
-
+  const orderState = [
+    ['반품', '교환'],
+    ['신청', '대기', '승인'],
+  ];
+  const orderBtn = [
+    ['#99D4F1', '#58B570'],
+    ['#C3FB8E', '#B39F9C', '#B39F9C'],
+  ];
 
   //초기 데이타(주문데이터, 주문내역데이터, 반품데이터 불러오기)
   useEffect(() => {
-    orderLoading();
-    orderListLoading();
-    changeLoading();
+    initLoading();
   }, []);
 
+  useEffect(() => {
+    initJoinData.then((res) => setJData(res));
+  }, [changeData]);
+
   //orderData loading
-  const orderLoading = () => {
+  const initLoading = () => {
     ApiService.fetchOrder()
       .then((res) => {
         setOrderData(res.data);
       })
+      .then(() => ApiService.fetchOrderList())
+      .then((res) => setOrderListData(res.data))
+      .then(() =>
+        ApiService.fetchChangeList().then((res) => {
+          setChangeData(res.data);
+        }),
+      )
       .catch((err) => console.log(err));
-  };
-
-  //orderListData loading
-  const orderListLoading = () => {
-    ApiService.fetchOrderList()
-      .then((res) => {
-        setOrderListData(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  //change/return data loading
-  const changeLoading = () => {
-    ApiService.fetchChangeList()
-      .then(res => {
-        setChangeData(res.data);
-      })
-      .catch(err => console.log(err));
   };
 
   //주문->주문상세 모달
@@ -103,57 +96,45 @@ export default function Return() {
   //선택한 데이터의 주문상태와 바꿀 주문상태
   const [selOrderState, setOrderState] = useState('');
 
+  const objectWithoutKey = (object, key) => {
+    const { [key]: deletedKey, ...otherKeys } = object;
+    return otherKeys;
+  };
 
   // 조인조인
-  const initJoinData = (flag) => {
-    return new Promise((resolve, reject) => {
-      if (flag === 1) {
-        const fData = orderListData.map((obj) =>
-          Object.assign(
-            obj,
-            orderData.find((dd) => dd.o_num === obj.o_num),
+  const initJoinData = new Promise((resolve, reject) => {
+    let cd = _.cloneDeep(changeData);
+
+    cd = cd.map((obj) =>
+      Object.assign(
+        obj,
+        objectWithoutKey(
+          objectWithoutKey(
+            orderListData.find((dd) => dd.key === obj.key),
+            'c_type',
           ),
-        );
+          'c_state',
+        ),
+      ),
+    );
 
-        if (Object.keys(selectedNum).length !== 0) {
-          resolve(fData.filter((data) => data.key === selectedNum.key));
-        } else {
-          resolve(fData);
-        }
+    cd = cd.map((obj) =>
+      Object.assign(
+        obj,
+        orderData.find((od) => od.o_num === obj.o_num),
+      ),
+    );
 
-      } else if (flag === 2) {
+    resolve(cd);
+  });
 
-        const fData = changeData.map((obj) =>
-          Object.assign(
-            obj,
-            orderListData.find((cd) => cd.key === obj.key),
-          ),
-        );
-
-        if (Object.keys(selectedNum).length !== 0) {
-          resolve(fData.filter((data) => data.key === selectedNum.key));
-        } else {
-          resolve(fData);
-        }
-      } else {
-        reject('error');
-      }
-
-    });
+  const filterData = () => {
+    const fData = [...jData];
+    if (Object.keys(selectedNum).length !== 0) {
+      return fData.filter((data) => data.key === selectedNum.key);
+    }
+    return fData;
   };
-
-
-  //join both data (특정주문에 대한 주문번호)
-  const joinData = () => {
-    initJoinData(1).then((res) => setAfterOl(res));
-
-  };
-
-  //join both data (반품정보)
-  const joinDataC = () => {
-    initJoinData(2).then((res) => setAfterChange(res));
-  };
-
 
   //button click
   const btnClick = (index) => {
@@ -171,7 +152,7 @@ export default function Return() {
             selectNum(res.data.find((o) => o.o_num === selectedNum.o_num));
           })
           .catch((err) => console.log(err));
-        orderListLoading();
+        initLoading();
       })
       .catch((err) => console.log(err));
   };
@@ -208,25 +189,22 @@ export default function Return() {
         <Card>
           <CardHeader>
             <strong>반품/교환목록</strong>
-            <hr className="mt-4"/>
-            <ReturnSearchComponent handleSubmit={handleSubmit}/>
+            <hr className="mt-4" />
+            <ReturnSearchComponent handleSubmit={handleSubmit} />
           </CardHeader>
           <CardBody>
             <div>
               <Row>
                 <Col sm={12}>
                   <ReturnComponent
-                    orderListData={afterOl}
+                    jData={jData}
                     badgeColor={badgeColor}
-                    orderData={orderData}
                     sCondition={sCondition}
-                    changeData={afterChange}
                     modalToggle={modalToggle}
                     selectNum={selectNum}
                   />
                 </Col>
               </Row>
-
             </div>
           </CardBody>
           <CardFooter></CardFooter>
@@ -258,18 +236,17 @@ export default function Return() {
                     </Button>
                   ))}
                 </ButtonGroup>
-
                 <ReturnComponent
-                  changeData={afterChange}
-                  orderListData={orderListData}
+                  jData={filterData()}
                   badgeColor={badgeColor}
+                  isModal={true}
                 />
               </div>
 
               <div>
                 <p>주문상태</p>
                 <OrderListComponent
-                  orderListData={afterOl}
+                  orderListData={filterData()}
                   badgeColor={badgeColor}
                 />
               </div>
@@ -294,7 +271,6 @@ export default function Return() {
                   </Button>{' '}
                 </ModalFooter>
               </Modal>
-
             </ModalBody>
           </Modal>
         </Card>
