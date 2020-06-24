@@ -48,8 +48,8 @@ export default function Return() {
     ['신청', '대기', '승인'],
   ];
   const orderBtn = [
-    ['#99D4F1', '#58B570'],
-    ['#C3FB8E', '#B39F9C', '#B39F9C'],
+    ['#E95151', '#EECD40'],
+    ['#D9D9D7', '#D9D9D7', '#D9D9D7'],
   ];
 
   //초기 데이타(주문데이터, 주문내역데이터, 반품데이터 불러오기)
@@ -163,15 +163,32 @@ export default function Return() {
       case '결제대기중':
         return 'rgba(129,224,224,0.88)';
       case '결제완료':
-        return orderBtn[0];
+        return '#99D4F1';
       case '배송중':
-        return orderBtn[1];
+        return '#58B570';
       case '배송완료':
-        return orderBtn[2];
+        return '#C3FB8E';
       case '구매확정':
         return '#cbffcd';
       default:
-        return orderBtn[3];
+        return '#B39F9C';
+    }
+  };
+  //뱃지색깔2
+  const badgeColor2 = (status) => {
+    switch (status) {
+      case '교환':
+        return orderBtn[0][0];
+      case '반품':
+        return orderBtn[0][1];
+      case '대기':
+        return orderBtn[1][0];
+      case '신청':
+        return orderBtn[1][1];
+      case '승인':
+        return orderBtn[1][2];
+      default:
+        return '#B39F9C';
     }
   };
 
@@ -198,7 +215,7 @@ export default function Return() {
                 <Col sm={12}>
                   <ReturnComponent
                     jData={jData}
-                    badgeColor={badgeColor}
+                    badgeColor={badgeColor2}
                     sCondition={sCondition}
                     modalToggle={modalToggle}
                     selectNum={selectNum}
@@ -225,20 +242,21 @@ export default function Return() {
                   반품/교환 상태변경
                 </p>
                 <ButtonGroup size="sm">
-                  {orderState.map((os, index) => (
-                    <Button
-                      style={{ backgroundColor: orderBtn[index] }}
-                      onClick={() => btnClick(index)}
-                      disabled={selectedNum.o_status === orderState[index]}
-                      key={index}
-                    >
-                      {os}
-                    </Button>
-                  ))}
+                  {orderState.map((os, index) => {
+                    return os.forEach((os2, index2) => console.log(os2));
+                    // <Button
+                    //   style={{ backgroundColor: orderBtn[index] }}
+                    //   onClick={() => btnClick(index)}
+                    //   disabled={selectedNum.o_status === orderState[index]}
+                    //   key={index}
+                    // >
+                    //   {os}
+                    // </Button>
+                  })}
                 </ButtonGroup>
                 <ReturnComponent
                   jData={filterData()}
-                  badgeColor={badgeColor}
+                  badgeColor={badgeColor2}
                   isModal={true}
                 />
               </div>
@@ -250,7 +268,7 @@ export default function Return() {
                   badgeColor={badgeColor}
                 />
               </div>
-              {/*주문 상태 변경 모달*/}
+              {/*반품 상태 변경 모달*/}
               <Modal isOpen={nestedModal} fade={false} toggle={toggleNested}>
                 <ModalHeader>주문상태변경</ModalHeader>
                 <ModalBody>

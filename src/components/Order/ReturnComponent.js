@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState } from 'react';
+import React, { Component } from 'react';
 import ApiService from '../../apiService/ApiService';
 //페이지네이션
 import Pagination from '../../layouts/Pagination';
@@ -6,7 +6,7 @@ import { paginate } from '../utils/Paginate';
 import { Badge } from 'reactstrap';
 import moment from 'moment';
 import _ from 'lodash';
-import LinesEllipsis from 'react-lines-ellipsis';
+import EllipsisText from 'react-ellipsis-text';
 
 export default class ReturnComponent extends Component {
   state = {
@@ -206,7 +206,7 @@ export default class ReturnComponent extends Component {
           <h2>
             <Badge
               style={{
-                background: this.props.badgeColor(data.c_type),
+                background: this.props.badgeColor(data.c_state),
                 color: 'black',
               }}
             >
@@ -215,7 +215,7 @@ export default class ReturnComponent extends Component {
           </h2>
         </td>
         <td>
-          <LinesEllipsis text={data.c_reason} ellipsis="..." trimRight />
+          <EllipsisText text={data.c_reason} length={15} />
         </td>
       </tr>
     ));
