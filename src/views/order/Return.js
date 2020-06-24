@@ -7,11 +7,6 @@ import {
   CardHeader,
   Container,
   Col,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
   Row,
   Modal,
   ModalHeader,
@@ -19,15 +14,15 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import React, { Fragment, useState, useEffect } from 'react';
-import OrderSearchComponent from '../../components/Order/OrderSearchComponent';
-import classnames from 'classnames';
+import ReturnSearchComponent from '../../components/Order/ReturnSearchComponent';
 import ApiService from '../../apiService/ApiService';
 import { dateConverter } from '../../components/utils/DateConverter';
 import OrderListComponent from '../../components/Order/OrderListComponent';
-import OrderComponent from '../../components/Order/OrderComponent';
+import ReturnComponent from '../../components/Order/ReturnComponent';
 import PaymentComponent from '../../components/Order/PaymentComponent';
-import PayeeComponent from '../../components/Order/PayeeComponent';
+import _ from 'lodash';
 
+//반품 & 교환
 const modalStyle = {
   position: 'relative',
   display: 'table' /* This is important */,
@@ -37,20 +32,29 @@ const modalStyle = {
   minWidth: '300px',
 };
 
-export default function OrderList() {
+export default function Return() {
   //주문데이터
   const [orderData, setOrderData] = useState([]);
   //주문내역데이터
   const [orderListData, setOrderListData] = useState([]);
+  //반품데이터
+  const [changeData, setChangeData] = useState([]);
 
   //주문상태변경
-  const orderState = ['결제완료', '배송중', '배송완료', '취소대기', '취소승인'];
-  const orderBtn = ['#99D4F1', '#58B570', '#C3FB8E', '#B39F9C', '#B39F9C'];
+  const orderState = [['반품', '교환'], ['신청', '대기', '승인']];
+  const orderBtn = [['#99D4F1', '#58B570'], ['#C3FB8E', '#B39F9C', '#B39F9C']];
 
-  //초기 데이타(주문데이터, 주문내역데이터 불러오기)
+  //가공된 change데이터
+  const [afterChange, setAfterChange] = useState([]);
+  //가공된 orderList 데이터
+  const [afterOl, setAfterOl] = useState([]);
+
+
+  //초기 데이타(주문데이터, 주문내역데이터, 반품데이터 불러오기)
   useEffect(() => {
     orderLoading();
     orderListLoading();
+    changeLoading();
   }, []);
 
   //orderData loading
@@ -69,6 +73,15 @@ export default function OrderList() {
         setOrderListData(res.data);
       })
       .catch((err) => console.log(err));
+  };
+
+  //change/return data loading
+  const changeLoading = () => {
+    ApiService.fetchChangeList()
+      .then(res => {
+        setChangeData(res.data);
+      })
+      .catch(err => console.log(err));
   };
 
   //주문->주문상세 모달
@@ -90,26 +103,57 @@ export default function OrderList() {
   //선택한 데이터의 주문상태와 바꿀 주문상태
   const [selOrderState, setOrderState] = useState('');
 
-  //테이블 탭
-  const [activeTab, setActiveTab] = useState('1');
-  const toggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
+
+  // 조인조인
+  const initJoinData = (flag) => {
+    return new Promise((resolve, reject) => {
+      if (flag === 1) {
+        const fData = orderListData.map((obj) =>
+          Object.assign(
+            obj,
+            orderData.find((dd) => dd.o_num === obj.o_num),
+          ),
+        );
+
+        if (Object.keys(selectedNum).length !== 0) {
+          resolve(fData.filter((data) => data.key === selectedNum.key));
+        } else {
+          resolve(fData);
+        }
+
+      } else if (flag === 2) {
+
+        const fData = changeData.map((obj) =>
+          Object.assign(
+            obj,
+            orderListData.find((cd) => cd.key === obj.key),
+          ),
+        );
+
+        if (Object.keys(selectedNum).length !== 0) {
+          resolve(fData.filter((data) => data.key === selectedNum.key));
+        } else {
+          resolve(fData);
+        }
+      } else {
+        reject('error');
+      }
+
+    });
   };
+
 
   //join both data (특정주문에 대한 주문번호)
   const joinData = () => {
-    const fData = orderListData.map((obj) =>
-      Object.assign(
-        obj,
-        orderData.find((dd) => dd.o_num === obj.o_num),
-      ),
-    );
+    initJoinData(1).then((res) => setAfterOl(res));
 
-    if (selectedNum) {
-      return fData.filter((data) => data.o_num === selectedNum.o_num);
-    }
-    return fData;
   };
+
+  //join both data (반품정보)
+  const joinDataC = () => {
+    initJoinData(2).then((res) => setAfterChange(res));
+  };
+
 
   //button click
   const btnClick = (index) => {
@@ -163,67 +207,26 @@ export default function OrderList() {
       <Container className="themed-container pt-7" fluid={true}>
         <Card>
           <CardHeader>
-            <strong>전체주문목록</strong>
-            <hr className="mt-4" />
-            <OrderSearchComponent handleSubmit={handleSubmit} />
+            <strong>반품/교환목록</strong>
+            <hr className="mt-4"/>
+            <ReturnSearchComponent handleSubmit={handleSubmit}/>
           </CardHeader>
           <CardBody>
             <div>
-              <Nav tabs>
-                <NavItem>
-                  <NavLink
-                    className={classnames({ active: activeTab === '1' })}
-                    onClick={() => {
-                      toggle('1');
-                    }}
-                  >
-                    주문번호별
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    className={classnames({ active: activeTab === '2' })}
-                    onClick={() => {
-                      toggle('2');
-                    }}
-                  >
-                    주문내역번호별
-                  </NavLink>
-                </NavItem>
-              </Nav>
+              <Row>
+                <Col sm={12}>
+                  <ReturnComponent
+                    orderListData={afterOl}
+                    badgeColor={badgeColor}
+                    orderData={orderData}
+                    sCondition={sCondition}
+                    changeData={afterChange}
+                    modalToggle={modalToggle}
+                    selectNum={selectNum}
+                  />
+                </Col>
+              </Row>
 
-              <TabContent activeTab={activeTab}>
-                {/* 주문번호별 */}
-                <TabPane tabId="1">
-                  <Row>
-                    <Col sm="12">
-                      <OrderComponent
-                        orderData={orderData}
-                        orderListData={orderListData}
-                        modalToggle={modalToggle}
-                        selectNum={selectNum}
-                        badgeColor={badgeColor}
-                        sCondition={sCondition}
-                      />
-                    </Col>
-                  </Row>
-                </TabPane>
-
-                {/* 주문내역번호별 */}
-                <TabPane tabId="2">
-                  <Row>
-                    <Col sm={12}>
-                      <OrderListComponent
-                        orderListData={orderListData}
-                        badgeColor={badgeColor}
-                        orderData={orderData}
-                        sCondition={sCondition}
-
-                      />
-                    </Col>
-                  </Row>
-                </TabPane>
-              </TabContent>
             </div>
           </CardBody>
           <CardFooter></CardFooter>
@@ -233,7 +236,7 @@ export default function OrderList() {
             fade={false}
             toggle={modalToggle}
           >
-            <ModalHeader toggle={modalToggle}>주문상세내역</ModalHeader>
+            <ModalHeader toggle={modalToggle}>반품/교환 신청내역</ModalHeader>
             <ModalBody>
               <p className="pb-0 mb-0 mt-0">주문번호: {selectedNum.o_num}</p>
               <p className="pt-0 mt-0">
@@ -241,7 +244,7 @@ export default function OrderList() {
               </p>
               <div>
                 <p style={{ display: 'inline-block' }} className="mr-2">
-                  주문상태변경
+                  반품/교환 상태변경
                 </p>
                 <ButtonGroup size="sm">
                   {orderState.map((os, index) => (
@@ -255,11 +258,21 @@ export default function OrderList() {
                     </Button>
                   ))}
                 </ButtonGroup>
+
+                <ReturnComponent
+                  changeData={afterChange}
+                  orderListData={orderListData}
+                  badgeColor={badgeColor}
+                />
               </div>
-              <OrderListComponent
-                orderListData={joinData()}
-                badgeColor={badgeColor}
-              />
+
+              <div>
+                <p>주문상태</p>
+                <OrderListComponent
+                  orderListData={afterOl}
+                  badgeColor={badgeColor}
+                />
+              </div>
               {/*주문 상태 변경 모달*/}
               <Modal isOpen={nestedModal} fade={false} toggle={toggleNested}>
                 <ModalHeader>주문상태변경</ModalHeader>
@@ -281,15 +294,7 @@ export default function OrderList() {
                   </Button>{' '}
                 </ModalFooter>
               </Modal>
-              <div>
-                <p>결제정보</p>
-                <PaymentComponent selectedNum={selectedNum} />
-              </div>
 
-              <div className="pt-3">
-                <p>수취자정보</p>
-                <PayeeComponent selectedNum={selectedNum} />
-              </div>
             </ModalBody>
           </Modal>
         </Card>

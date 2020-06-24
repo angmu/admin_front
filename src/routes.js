@@ -34,6 +34,8 @@ import FAQ from 'views/board/FAQ';
 /////////////////////////////////////////////////////////////////////
 //ORDER
 import OrderList from 'views/order/OrderList';
+//RETURN (반품)
+import Return from './views/order/Return';
 
 
 var routes = [
@@ -137,10 +139,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/order/return',
         name: '반품/교환',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: Return,
         submenu: null,
       },
     ],

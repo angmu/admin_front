@@ -242,6 +242,11 @@ class ApiService {
   fetchPayeeInfo(key) {
     return axios.get(FRONT_SERVICE_URL + `admin/payeelist/${key}`);
   }
+
+  //반품리스트 가져오기
+  fetchChangeList(){
+    return axios.get(FRONT_SERVICE_URL + 'admin/clist');
+  }
 }
 
 export default new ApiService();

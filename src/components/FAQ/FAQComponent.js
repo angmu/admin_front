@@ -174,7 +174,7 @@ export default class FAQComponent extends Component {
 
     filteredData = paginate(filteredData, this.currentPage, this.pageSize).map(
       (cons, index) => (
-        <React.Fragment key={cons.review_num}>
+        <React.Fragment key={index}>
           <>
             <tr
               style={{

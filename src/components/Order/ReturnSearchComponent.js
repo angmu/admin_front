@@ -11,7 +11,7 @@ import {
 import moment from 'moment';
 import OrderProductCompoment from './OrderProductCompoment';
 
-export default class OrderSearchComponent extends Component {
+export default class ReturnSearchComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -25,11 +25,13 @@ export default class OrderSearchComponent extends Component {
       productSelect: 0,
       openModal: false,
     };
+
+    this.checkCnt = 6;
   }
 
   componentDidMount() {
     this.state.checkedBoxs.set('checkboxAll', true);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < this.checkCnt; i++) {
       this.state.checkedBoxs.set(`checkbox${i + 2}`, true);
     }
   }
@@ -53,11 +55,11 @@ export default class OrderSearchComponent extends Component {
     const isChecked = e.target.checked;
 
     if (item === 'checkboxAll' && isChecked) {
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < this.checkCnt; i++) {
         this.state.checkedBoxs.set(`checkbox${i + 2}`, true);
       }
     } else if (item === 'checkboxAll' && !isChecked) {
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < this.checkCnt; i++) {
         this.state.checkedBoxs.set(`checkbox${i + 2}`, false);
       }
     }
@@ -98,7 +100,7 @@ export default class OrderSearchComponent extends Component {
 
     const blankMap = new Map();
     blankMap.set('checkboxAll', true);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < this.checkCnt; i++) {
       blankMap.set(`checkbox${i + 2}`, true);
     }
 
@@ -145,10 +147,9 @@ export default class OrderSearchComponent extends Component {
               <option value={0} disabled>
                 --검색항목선택--
               </option>
-              <option value={1}>주문번호</option>
-              <option value={2}>주문자아이디</option>
-              <option value={3}>주문자명</option>
-              <option value={4}>주문내역번호</option>
+              <option value={1}>주문자아이디</option>
+              <option value={2}>주문자명</option>
+              <option value={3}>주문내역번호</option>
             </Input>
           </Col>
           <Col sm={4}>
@@ -241,7 +242,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox2"
                 id="Checkbox2"
-                label="결제대기중"
+                label="반품신청"
                 onChange={this.handleCheckbox}
               />
               <CustomInput
@@ -250,7 +251,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox3"
                 id="Checkbox3"
-                label="결제완료"
+                label="반품대기"
                 onChange={this.handleCheckbox}
               />
               <CustomInput
@@ -259,7 +260,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox4"
                 id="Checkbox4"
-                label="배송중"
+                label="반품승인"
                 onChange={this.handleCheckbox}
               />
               <CustomInput
@@ -268,7 +269,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox5"
                 id="Checkbox5"
-                label="배송완료"
+                label="교환신청"
                 onChange={this.handleCheckbox}
               />
               <CustomInput
@@ -277,7 +278,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox6"
                 id="Checkbox6"
-                label="취소신청"
+                label="교환대기"
                 onChange={this.handleCheckbox}
               />
               <CustomInput
@@ -286,25 +287,7 @@ export default class OrderSearchComponent extends Component {
                 type="checkbox"
                 name="checkbox7"
                 id="Checkbox7"
-                label="취소대기"
-                onChange={this.handleCheckbox}
-              />
-              <CustomInput
-                className="pr-3"
-                checked={!!this.state.checkedBoxs.get('checkbox8')}
-                type="checkbox"
-                name="checkbox8"
-                id="Checkbox8"
-                label="취소승인"
-                onChange={this.handleCheckbox}
-              />
-              <CustomInput
-                className="pr-3"
-                checked={!!this.state.checkedBoxs.get('checkbox9')}
-                type="checkbox"
-                name="checkbox9"
-                id="Checkbox9"
-                label="구매확정"
+                label="교환승인"
                 onChange={this.handleCheckbox}
               />
             </FormGroup>
