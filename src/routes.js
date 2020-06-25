@@ -37,6 +37,9 @@ import OrderList from 'views/order/OrderList';
 //RETURN (반품)
 import Return from './views/order/Return';
 
+/////////////////////////////////////////////////////////////////////
+//Banner
+import Banner from 'views/basic/Banner';
 
 var routes = [
   {
@@ -191,7 +194,7 @@ var routes = [
     ],
   },
   {
-    path: '/user-profile',
+    path: '/basic',
     name: '기본 설정',
     icon: ['ni ni-key-25 text-yellow', 'ni ni-bold-down'],
     component: Profile,
@@ -211,10 +214,10 @@ var routes = [
         submenu: null,
       },
       {
-        path: '/member',
+        path: '/basic/banner',
         name: '배너관리',
         icon: ['ni ni-fat-delete'],
-        component: Member,
+        component: Banner,
         submenu: null,
       },
       {

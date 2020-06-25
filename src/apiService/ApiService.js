@@ -252,6 +252,11 @@ class ApiService {
   updateCStatus(code, val1, val2){
     return axios.patch(FRONT_SERVICE_URL + `admin/clist/${code}/${val1}/${val2}`);
   }
+
+  //모든 배너정보 가져오기
+  fetchBannerList(){
+    return axios.get(FRONT_SERVICE_URL + 'admin/blist');
+  }
 }
 
 export default new ApiService();
