@@ -247,6 +247,11 @@ class ApiService {
   fetchChangeList(){
     return axios.get(FRONT_SERVICE_URL + 'admin/clist');
   }
+
+  //반품상태 업데이트
+  updateCStatus(code, val1, val2){
+    return axios.patch(FRONT_SERVICE_URL + `admin/clist/${code}/${val1}/${val2}`);
+  }
 }
 
 export default new ApiService();

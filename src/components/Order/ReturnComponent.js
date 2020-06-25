@@ -52,12 +52,9 @@ export default class ReturnComponent extends Component {
       //1. 키워드가 있으면
       if (sCondition.keyword) {
         const ske = sCondition.keyword.trim();
-        //1 -> 주문번호 2->주문자아이디 3->주문자명 4->주문내역번호
+        //1 -> 주문자아이디 2->주문자명 3->주문내역번호
         switch (sCondition.keywordSelect) {
           case '1':
-            fData = fData.filter((d) => d.o_num.indexOf(ske) > -1);
-            break;
-          case '2':
             fData = fData
               .map((d) =>
                 !d.id
@@ -72,11 +69,11 @@ export default class ReturnComponent extends Component {
               )
               .filter((d) => d.id.indexOf(ske) > -1);
             break;
-          case '3':
+          case '2':
             fData = fData.filter((d) => d.o_name.indexOf(ske) > -1);
             break;
           //주문내역번호
-          case '4':
+          case '3':
             //데이터 쪼인
             const jData2 = jData.filter((d) => d.key.indexOf(ske) > -1);
             fData = _.filter(fData, function (od) {

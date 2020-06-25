@@ -45,12 +45,13 @@ export default function Return() {
   //주문상태변경
   const orderState = [
     ['반품', '교환'],
-    ['신청', '대기', '승인'],
+    ['대기', '승인'],
   ];
   const orderBtn = [
     ['#E95151', '#EECD40'],
     ['#D9D9D7', '#D9D9D7', '#D9D9D7'],
   ];
+
 
   //초기 데이타(주문데이터, 주문내역데이터, 반품데이터 불러오기)
   useEffect(() => {
@@ -58,7 +59,12 @@ export default function Return() {
   }, []);
 
   useEffect(() => {
-    initJoinData.then((res) => setJData(res));
+    initJoinData.then((res) => {
+      setJData(res);
+      if (Object.keys(selectedNum).length !== 0) {
+        selectNum(res.find((o) => o.key === selectedNum.key));
+      }
+    });
   }, [changeData]);
 
   //orderData loading
@@ -137,21 +143,15 @@ export default function Return() {
   };
 
   //button click
-  const btnClick = (index) => {
-    setOrderState(orderState[index]);
+  const btnClick = (btnt) => {
+    setOrderState(btnt);
     toggleNested();
   };
 
-  //order상태 변경
-  const updateOrderState = () => {
-    ApiService.updateOStatus(selectedNum.o_num, selOrderState)
+  //change상태 변경
+  const updateChangeState = () => {
+    ApiService.updateCStatus(selectedNum.key, selOrderState[0], selOrderState[1])
       .then((res) => {
-        ApiService.fetchOrder()
-          .then((res) => {
-            setOrderData(res.data);
-            selectNum(res.data.find((o) => o.o_num === selectedNum.o_num));
-          })
-          .catch((err) => console.log(err));
         initLoading();
       })
       .catch((err) => console.log(err));
@@ -200,14 +200,47 @@ export default function Return() {
     e.preventDefault();
   };
 
+  //반품교환 버튼
+  const retBtn = () => {
+
+    if (Object.keys(selectedNum).length === 0) {
+      return;
+    }
+    const btns = [];
+
+    let backColor = '';
+    if (selectedNum.c_type === '반품') {
+      backColor = orderBtn[0][1];
+      for (let j = 0; j < orderState[1].length; j++) {
+        btns.push([orderState[0][0], orderState[1][j]]);
+      }
+    } else if (selectedNum.c_type === '교환') {
+      backColor = orderBtn[0][0];
+      for (let j = 0; j < orderState[1].length; j++) {
+        btns.push([orderState[0][1], orderState[1][j]]);
+      }
+    }
+
+    return btns.map((btnt, index) => {
+      return <Button
+        style={{ backgroundColor: backColor }}
+        onClick={() => btnClick(btnt)}
+        disabled={Object.keys(selectedNum).length !== 0 && btnt[0] + btnt[1] === selectedNum.c_type.concat(selectedNum.c_state)}
+        key={index}
+      >
+        {btnt}
+      </Button>;
+    });
+  };
+
   return (
     <Fragment>
       <Container className="themed-container pt-7" fluid={true}>
         <Card>
           <CardHeader>
             <strong>반품/교환목록</strong>
-            <hr className="mt-4" />
-            <ReturnSearchComponent handleSubmit={handleSubmit} />
+            <hr className="mt-4"/>
+            <ReturnSearchComponent handleSubmit={handleSubmit}/>
           </CardHeader>
           <CardBody>
             <div>
@@ -242,17 +275,7 @@ export default function Return() {
                   반품/교환 상태변경
                 </p>
                 <ButtonGroup size="sm">
-                  {orderState.map((os, index) => {
-                    return os.forEach((os2, index2) => console.log(os2));
-                    // <Button
-                    //   style={{ backgroundColor: orderBtn[index] }}
-                    //   onClick={() => btnClick(index)}
-                    //   disabled={selectedNum.o_status === orderState[index]}
-                    //   key={index}
-                    // >
-                    //   {os}
-                    // </Button>
-                  })}
+                  {retBtn()}
                 </ButtonGroup>
                 <ReturnComponent
                   jData={filterData()}
@@ -270,9 +293,9 @@ export default function Return() {
               </div>
               {/*반품 상태 변경 모달*/}
               <Modal isOpen={nestedModal} fade={false} toggle={toggleNested}>
-                <ModalHeader>주문상태변경</ModalHeader>
+                <ModalHeader>반품상태변경</ModalHeader>
                 <ModalBody>
-                  <strong>{selectedNum.o_status}</strong>{' '}
+                  <strong>{Object.keys(selectedNum).length !== 0 ? selectedNum.c_type.concat(selectedNum.c_state) : null}</strong>{' '}
                   <i className="fas fa-arrow-right"></i>{' '}
                   <strong>{selOrderState}</strong>
                   (으)로 변경합니다.
@@ -282,7 +305,7 @@ export default function Return() {
                     color="warning"
                     onClick={() => {
                       toggleNested();
-                      updateOrderState();
+                      updateChangeState();
                     }}
                   >
                     OK
