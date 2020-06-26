@@ -36,7 +36,6 @@ export default class ReviewComponent extends Component {
       keyword: '',
       checked: false,
       productData: [],
-      initData: [],
     };
 
     this.pageSize = 8;
@@ -44,44 +43,14 @@ export default class ReviewComponent extends Component {
   }
 
   componentDidMount() {
-    this.initData();
+    this.loadingData();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.currentPage !== prevState.currentPage) {
-      this.paginationCustom();
-    }
-  }
-
-  paginationCustom = () => {
-    const start = ((this.state.currentPage - 1) * this.pageSize);
-    const end = ((this.state.currentPage) * this.pageSize);
-
-    this.loadingData(start, end);
-
-  };
-
-
-  initData = () => {
-    this.props.tableDataR().then((data) => {
-        this.setState(
-          {
-            initData: data,
-          },
-          () => {
-            this.loadingData(0, 8);
-          });
-      },
-    );
-  };
-
-  loadingData = (start, end) => {
-    this.props.tableDataR().then((data) => {
-      const pagingData = data.filter((d, index) =>
-        start <= index && end > index);
+  loadingData = () => {
+    this.props.tableDataR().then((data) =>
       this.setState(
         {
-          data: pagingData,
+          data: data,
         },
         () => {
           const answerText = [...this.state.answerText];
@@ -91,14 +60,11 @@ export default class ReviewComponent extends Component {
             }
             this.setState({
               answerText: answerText,
-              collapseOpen: [],
-              productData: [],
-              inputText: [],
             });
           });
         },
-      );
-    });
+      ),
+    );
   };
 
   //page변경 핸들러
@@ -145,9 +111,8 @@ export default class ReviewComponent extends Component {
     });
   };
 
-  //answer OK (insert and updaete)
+  //answer OK
   answerBtnHandler = (key, index) => {
-
     this.props
       .patchA(
         JSON.stringify({
@@ -156,9 +121,8 @@ export default class ReviewComponent extends Component {
         }),
       )
       .then(() => {
-        this.paginationCustom();
+        this.loadingData();
       });
-
   };
 
   //answerDelete
@@ -176,7 +140,7 @@ export default class ReviewComponent extends Component {
             inputText: inputText,
             collapseOpen: managedToggle,
           },
-          () => this.paginationCustom(),
+          this.loadingData(),
         );
       })
       .catch((err) => alert(err));
@@ -240,11 +204,6 @@ export default class ReviewComponent extends Component {
 
     let filteredData = this.state.data;
 
-    if(this.state.checked || this.state.keyword){
-      filteredData = this.state.initData;
-    }
-
-
     const ready = [];
     //답변대기만 보고싶을 경우
     if (this.state.checked) {
@@ -254,7 +213,6 @@ export default class ReviewComponent extends Component {
         }
       });
     }
-    console.log(ready);
 
     const ss = [];
     //검색어가 있을 경우
@@ -281,10 +239,13 @@ export default class ReviewComponent extends Component {
         </tr>
       );
     }
+    this.resultCnt = filteredData.length;
 
-    this.resultCnt = this.state.initData.length;
-    if(this.state.checked || this.state.keyword){
+    if (this.state.checked || this.state.keyword) {
+      this.state.currentPage = 1;
       this.resultCnt = 0;
+    } else {
+      filteredData = paginate(filteredData, this.state.currentPage, this.pageSize);
     }
 
     filteredData = filteredData.map(
@@ -296,18 +257,18 @@ export default class ReviewComponent extends Component {
               <tr
                 style={{
                   cursor: 'pointer',
-                  background: this.state.collapseOpen[index]
+                  background: this.state.collapseOpen[index + (this.pageSize * (this.state.currentPage - 1))]
                     ? '#FAFAD2'
                     : 'white',
                 }}
-                onClick={() => this.toggle(index)}
+                onClick={() => this.toggle(index + (this.pageSize * (this.state.currentPage - 1)))}
               >
                 {this.props.rowId.map((rr, idx) => (
                   <Fragment key={idx}>
                     <td>
                       {idx === this.props.rowId.length - 1
                         ? dateConverter(cons[rr])
-                        : idx === 2 ? cons[rr] ? cons[rr] : '비회원' : cons[rr]}
+                        : cons[rr]}
                     </td>
                   </Fragment>
                 ))}
@@ -325,13 +286,13 @@ export default class ReviewComponent extends Component {
               </tr>
               <tr>
                 <td colSpan={7}>
-                  <Collapse isOpen={this.state.collapseOpen[index]}>
+                  <Collapse isOpen={this.state.collapseOpen[index + (this.pageSize * (this.state.currentPage - 1))]}>
                     <Card>
                       <CardBody>
                         <div style={{ textAlign: 'left' }}>
                           <h3>{cons.title}</h3>
                           <span className="mb-0 pt-1 pb-0">
-                            <p className="mb-0 pb-0"> 작성자: {cons.id ? cons.id : '비회원'}</p>
+                            <p className="mb-0 pb-0"> 작성자: {cons.id}</p>
                           </span>
                           <span className="mb-0 pb-0">
                             <p className="mb-0 pb-0">
@@ -340,10 +301,11 @@ export default class ReviewComponent extends Component {
                             </p>
                           </span>
                           <span className="mb-0 pb-0">
-                            {this.state.productData[index] ? (
+                            {this.state.productData[index + (this.pageSize * (this.state.currentPage - 1))] ? (
                               <div>
-                                {this.state.productData[index].PRODUCT_NAME} |{' '}
-                                {this.state.productData[index].o_quant}개 구매
+                                {this.state.productData[index + (this.pageSize * (this.state.currentPage - 1))].PRODUCT_NAME} |{' '}
+                                {this.state.productData[index + (this.pageSize * (this.state.currentPage - 1))].o_quant}개
+                                구매
                               </div>
                             ) : null}
                           </span>
@@ -370,7 +332,7 @@ export default class ReviewComponent extends Component {
                         <hr className="pt-0 mb-0"></hr>
 
                         {/* //이미 답변된 데이터 */}
-                        {this.state.answerText[index] ? (
+                        {this.state.answerText[index + (this.pageSize * (this.state.currentPage - 1))] ? (
                           <Row>
                             <Col>
                               <pre
@@ -380,13 +342,13 @@ export default class ReviewComponent extends Component {
                                 }}
                                 className="pt-3"
                               >
-                                {`${this.state.answerText[index]}`}
+                                {`${this.state.answerText[index + (this.pageSize * (this.state.currentPage - 1))]}`}
                               </pre>
 
                               <Button
                                 size="sm"
                                 color="warning"
-                                onClick={() => this.putBtnHandler(index)}
+                                onClick={() => this.putBtnHandler(index + (this.pageSize * (this.state.currentPage - 1)))}
                               >
                                 답변수정
                               </Button>
@@ -402,16 +364,16 @@ export default class ReviewComponent extends Component {
                                   name="text"
                                   id="exampleText"
                                   style={{ minHeight: '250px' }}
-                                  value={this.state.inputText[index]}
+                                  value={this.state.inputText[index + (this.pageSize * (this.state.currentPage - 1))]}
                                   onChange={(e) =>
-                                    this.answerInputHandler(e, index)
+                                    this.answerInputHandler(e, index + (this.pageSize * (this.state.currentPage - 1)))
                                   }
                                 />
                               </FormGroup>
                               <Button
                                 color="warning"
                                 onClick={() =>
-                                  this.answerBtnHandler(cons.review_num, index)
+                                  this.answerBtnHandler(cons.review_num, index + (this.pageSize * (this.state.currentPage - 1)))
                                 }
                               >
                                 답변등록
@@ -421,13 +383,13 @@ export default class ReviewComponent extends Component {
                                   <Button
                                     color="danger"
                                     onClick={() =>
-                                      this.answerDelete(cons.review_num, index)
+                                      this.answerDelete(cons.review_num, index + (this.pageSize * (this.state.currentPage - 1)))
                                     }
                                   >
                                     답변삭제{' '}
                                   </Button>
                                   <Button
-                                    onClick={() => this.answerBack(index)}
+                                    onClick={() => this.answerBack(index + (this.pageSize * (this.state.currentPage - 1)))}
                                   >
                                     이전으로
                                   </Button>

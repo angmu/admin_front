@@ -279,9 +279,17 @@ export default class ProductQnA extends Component {
         </tr>
       );
     }
+
     this.resultCnt = filteredData.length;
 
-    filteredData = paginate(filteredData, this.currentPage, this.pageSize).map(
+    if (this.state.checked || this.state.keyword) {
+      this.state.currentPage = 1;
+      this.resultCnt = 0;
+    } else {
+      filteredData = paginate(filteredData, this.state.currentPage, this.pageSize);
+    }
+
+    filteredData = filteredData.map(
       (cons, index) => (
         <React.Fragment key={cons.q_num}>
           {(ready.length > 0 && !ready.includes(cons.q_num)) ||
@@ -290,11 +298,11 @@ export default class ProductQnA extends Component {
               <tr
                 style={{
                   cursor: 'pointer',
-                  background: this.state.collapseOpen[index]
+                  background: this.state.collapseOpen[index + (this.pageSize * (this.state.currentPage - 1))]
                     ? '#FAFAD2'
                     : 'white',
                 }}
-                onClick={() => this.toggle(index)}
+                onClick={() => this.toggle(index + (this.pageSize * (this.state.currentPage - 1)))}
               >
                 <td>{cons.q_num}</td>
                 <td>{cons.pro_num}</td>
@@ -305,7 +313,7 @@ export default class ProductQnA extends Component {
                   {dateConverter(cons.q_date)}
                 </td>
                 <td>
-                  {this.state.answerData[index] ? (
+                  {this.state.answerData[index + (this.pageSize * (this.state.currentPage - 1))] ? (
                     <Badge color="primary" pill>
                       답변완료
                     </Badge>
@@ -318,7 +326,7 @@ export default class ProductQnA extends Component {
               </tr>
               <tr>
                 <td colSpan={7}>
-                  <Collapse isOpen={this.state.collapseOpen[index]}>
+                  <Collapse isOpen={this.state.collapseOpen[index + (this.pageSize * (this.state.currentPage - 1))]}>
                     <Card>
                       <CardBody>
                         <div style={{ textAlign: 'left' }}>
@@ -341,7 +349,7 @@ export default class ProductQnA extends Component {
                         <hr className="pt-0 mb-0"></hr>
 
                         {/* //이미 답변된 데이터 */}
-                        {this.state.answerText[index] ? (
+                        {this.state.answerText[index + (this.pageSize * (this.state.currentPage - 1))] ? (
                           <Row>
                             <Col>
                               <pre
@@ -351,20 +359,20 @@ export default class ProductQnA extends Component {
                                 }}
                                 className="pt-3"
                               >
-                                {`${this.state.answerText[index]}`}
+                                {`${this.state.answerText[index + (this.pageSize * (this.state.currentPage - 1))]}`}
                               </pre>
                               <span
                                 className="mr-2"
                                 style={{ fontSize: '0.8em' }}
                               >
                                 {dateConverter(
-                                  this.state.answerData[index].a_date,
+                                  this.state.answerData[index + (this.pageSize * (this.state.currentPage - 1))].a_date,
                                 )}
                               </span>
                               <Button
                                 size="sm"
                                 color="warning"
-                                onClick={() => this.putBtnHandler(index)}
+                                onClick={() => this.putBtnHandler(index + (this.pageSize * (this.state.currentPage - 1)))}
                               >
                                 답변수정
                               </Button>
@@ -380,16 +388,16 @@ export default class ProductQnA extends Component {
                                   name="text"
                                   id="exampleText"
                                   style={{ minHeight: '250px' }}
-                                  value={this.state.inputText[index]}
+                                  value={this.state.inputText[index + (this.pageSize * (this.state.currentPage - 1))]}
                                   onChange={(e) =>
-                                    this.answerInputHandler(e, index)
+                                    this.answerInputHandler(e, index + (this.pageSize * (this.state.currentPage - 1)))
                                   }
                                 />
                               </FormGroup>
                               <Button
                                 color="warning"
                                 onClick={() =>
-                                  this.answerBtnHandler(cons.q_num, index)
+                                  this.answerBtnHandler(cons.q_num, index + (this.pageSize * (this.state.currentPage - 1)))
                                 }
                               >
                                 답변등록
@@ -398,13 +406,13 @@ export default class ProductQnA extends Component {
                                 <React.Fragment>
                                   <Button
                                     color="danger"
-                                    onClick={() => this.answerDelete(index)}
+                                    onClick={() => this.answerDelete(index + (this.pageSize * (this.state.currentPage - 1)))}
                                   >
                                     답변삭제{' '}
                                   </Button>
                                   <Button
                                     onClick={() =>
-                                      this.answerBack(cons.q_num, index)
+                                      this.answerBack(cons.q_num, index + (this.pageSize * (this.state.currentPage - 1)))
                                     }
                                   >
                                     이전으로
