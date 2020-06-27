@@ -72,7 +72,7 @@ export default function RegisterForm2({ handleChange, fD }) {
                 step="1"
                 name="amount"
                 onChange={handleChange}
-                defaultValue={fD ? fD[0].amount : 0}
+                defaultValue={fD ? fD[0].amount : 999}
               />
               <InputGroupAddon addonType="append">개</InputGroupAddon>
             </InputGroup>

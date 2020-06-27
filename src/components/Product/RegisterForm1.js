@@ -21,7 +21,11 @@ export default function RegisterForm1({
     cate_code_d1: '03',
     cate_code_d2: 'CF002',
   });
+  //backImg manage
+  const [bImg, sBImg] = useState();
 
+  //flag
+  const [uflag, sflag] = useState(0);
   //useContenxt
   const { data, sendData } = useContext(context);
 
@@ -31,15 +35,24 @@ export default function RegisterForm1({
         cate_code_d1: fD[1].cate_code_d1,
         cate_code_d2: fD[1].cate_code_d2,
       });
+      sBImg(fD[0].back_image);
+    } else {
+      sendData({
+        cate_code_d1: selectedOpt.cate_code_d1,
+        cate_code_d2: selectedOpt.cate_code_d2,
+        amount: '999',
+      });
     }
+    sflag(1);
   }, []);
 
   useEffect(() => {
-    sendData({
-      ...data,
-      ...selectedOpt,
-    });
-  }, [sendData, selectedOpt]);
+    if (uflag === 1)
+      sendData({
+        ...data,
+        ...selectedOpt,
+      });
+  }, [selectedOpt]);
 
   //category1에 해당하는 category2
   const cate2 = (c1Id) => {
@@ -65,19 +78,38 @@ export default function RegisterForm1({
     }
   };
 
+  //이미지 미리보기
+  const previewImg = (file) => {
+    if (!file) {
+      sBImg(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      sBImg(reader.result);
+    };
+    // 실패할 경우 에러 출력하기
+    reader.onerror = function (error) {
+      console.log('Error');
+    };
+  };
+
   //상세 설명 파일(backfile) 선택이벤트
   const handleInfoImg = (e) => {
     if (fD && mode === 'r') {
-      fD[0].back_image = null;
+      sBImg(null);
       sendData({
         ...data,
         newBackImg: e.target.files[0],
       });
+      previewImg(e.target.files[0]);
     } else {
       sendData({
         ...data,
         [e.target.name]: e.target.files[0],
       });
+      previewImg(e.target.files[0]);
     }
   };
 
@@ -117,6 +149,7 @@ export default function RegisterForm1({
               name="cate_code_d2"
               id="category2Select"
               style={{ color: 'black' }}
+              value={selectedOpt.cate_code_d2}
               onChange={handleCate}
             >
               {cate2(selectedOpt.cate_code_d1).map((c2) => {
@@ -257,12 +290,12 @@ export default function RegisterForm1({
             상세이미지
           </Label>
           <Col sm={10}>
-            {fD && fD[0].back_image ? (
+            {bImg ? (
               <div>
-                <div>기존 업로드된 파일:</div>
+                <div>업로드된 파일:</div>
                 <div style={{ width: '10%' }}>
                   <SideBySideMagnifier
-                    imageSrc={fD[0].back_image}
+                    imageSrc={bImg}
                     imageAlt="Example"
                     switchSides={true}
                     fillAvailableSpace={true}
