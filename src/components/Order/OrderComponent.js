@@ -201,7 +201,7 @@ export default class OrderComponent extends React.Component {
               <th>주문자아이디</th>
               <th>주문자명</th>
               <th>전화번호</th>
-              <th>배송비</th>
+              <th>주문총액</th>
               <th>사용포인트</th>
               <th>주문상태</th>
               <th>주문일</th>

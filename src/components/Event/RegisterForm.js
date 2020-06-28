@@ -12,6 +12,7 @@ export default function RegisterForm({
     e.preventDefault();
     let reader = new FileReader();
     let file = e.target.files[0];
+    if (!file) return;
     reader.onloadend = () => {
       if (v === 1) {
         sendForm({
@@ -32,6 +33,23 @@ export default function RegisterForm({
 
   //form 내용들
   const handleChange = (e) => {
+    if (e.target.name === 'startDate') {
+      if (formVal.endDate) {
+        if (formVal.endDate < e.target.value) {
+          alert('종료일이 시작일보다 빠를 수 없습니다.');
+          return;
+        }
+      }
+    }
+
+    if (e.target.name === 'endDate') {
+      if (formVal.startDate) {
+        if (formVal.startDate > e.target.value) {
+          alert('시작일이 종료일보다 늦을 수 없습니다.');
+          return;
+        }
+      }
+    }
     sendForm({
       ...formVal,
       [e.target.name]: e.target.value,

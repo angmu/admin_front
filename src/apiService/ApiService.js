@@ -244,18 +244,42 @@ class ApiService {
   }
 
   //반품리스트 가져오기
-  fetchChangeList(){
+  fetchChangeList() {
     return axios.get(FRONT_SERVICE_URL + 'admin/clist');
   }
 
   //반품상태 업데이트
-  updateCStatus(code, val1, val2){
-    return axios.patch(FRONT_SERVICE_URL + `admin/clist/${code}/${val1}/${val2}`);
+  updateCStatus(code, val1, val2) {
+    return axios.patch(
+      FRONT_SERVICE_URL + `admin/clist/${code}/${val1}/${val2}`,
+    );
   }
 
   //모든 배너정보 가져오기
-  fetchBannerList(){
+  fetchBannerList() {
     return axios.get(FRONT_SERVICE_URL + 'admin/blist');
+  }
+
+  //배너 현재시퀀스
+  fetchBannerSeq() {
+    return axios.get(FRONT_SERVICE_URL + 'admin/blistSeq');
+  }
+
+  //배너 추가
+  addBanner(data) {
+    return axios.post(FRONT_SERVICE_URL + 'admin/blist', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+
+  //배너 노출 여부
+  updateBanner(key, val) {
+    return axios.patch(FRONT_SERVICE_URL + `admin/blist/${key}/${val}`);
+  }
+
+  //배너 삭제
+  deleteBanner(key) {
+    return axios.delete(FRONT_SERVICE_URL + `admin/blistD/${key}`);
   }
 }
 

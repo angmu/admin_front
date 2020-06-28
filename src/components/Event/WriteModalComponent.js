@@ -36,6 +36,8 @@ const WriteModal = (props) => {
       contextImgUrl: '',
       startTime: '00:00',
       endTime: '23:59',
+      startDate: '',
+      endDate: '',
     });
   };
   const toggleNested = () => {

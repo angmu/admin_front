@@ -32,7 +32,7 @@ export default class UserListComponent extends Component {
 
   render() {
     return (
-      <Table>
+      <Table bordered responsive hover>
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -72,7 +72,11 @@ export default class UserListComponent extends Component {
               <td>{user.calender_check}</td>
               <td>{user.point}</td>
               <td>{new Date(user.join_date).toLocaleString()}</td>
-              <td>{new Date(user.delete_date).toLocaleString()}</td>
+              <td>
+                {user.delete_date
+                  ? new Date(user.delete_date).toLocaleString()
+                  : null}
+              </td>
 
               <td className="text-right">
                 <UncontrolledDropdown>
